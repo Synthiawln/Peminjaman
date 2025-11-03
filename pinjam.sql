@@ -6,7 +6,7 @@ CREATE TABLE user (
   nama VARCHAR(100) NOT NULL,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  role ENUM('admin', 'pegawai') DEFAULT 'pegawai',
+  role ENUM('super_admin','admin_ruangan','admin_kendaraan','user') DEFAULT 'user',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE peminjaman (
   tanggal_pinjam DATE,
   tanggal_kembali DATE,
   status ENUM('dipinjam', 'dikembalikan') DEFAULT 'dipinjam',
-  lo VARCHAR(100), --penanggung jawab
+  lo VARCHAR(100), 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (id_user) REFERENCES user(id)
 );
@@ -61,6 +61,5 @@ CREATE TABLE berita_acara (
   nomor_ba VARCHAR(50) UNIQUE,
   tanggal_dibuat DATE,
   isi TEXT,
-  file_BA VARCHAR(255),
   FOREIGN KEY (id_peminjaman) REFERENCES peminjaman(id)
 );

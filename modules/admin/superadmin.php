@@ -1,0 +1,189 @@
+<?php
+session_start();
+include_once("../../koneksi.php");
+
+// atuhentication
+$adminRoles = array('super_admin');
+if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
+    header('Location: ../auth/login.php');
+    exit();
+}
+
+$pageTitle = "Dashboard Super Admin";
+include("../../includes/header.php");
+include("../../includes/navbar.php");
+?>
+
+<div class="container mt-4">
+    <h3 class="mb-3">Dashboard Super Admin</h3>
+    <p class="text-muted">Pantau dan kelola seluruh aktivitas sistem (user, ruangan, kendaraan, dan peminjaman).</p>
+
+    <!-- Statistik Utama -->
+    <?php
+    $totalUser = $con->query("SELECT COUNT(*) AS total FROM user")->fetch_assoc()['total'];
+    $totalRuangan = $con->query("SELECT COUNT(*) AS total FROM ruangan")->fetch_assoc()['total'];
+    $totalKendaraan = $con->query("SELECT COUNT(*) AS total FROM kendaraan")->fetch_assoc()['total'];
+    $totalPeminjaman = $con->query("SELECT COUNT(*) AS total FROM peminjaman")->fetch_assoc()['total'];
+    ?>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h4><?= $totalUser; ?></h4>
+                    <p class="text-muted">User Terdaftar</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h4><?= $totalRuangan; ?></h4>
+                    <p class="text-muted">Total Ruangan</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h4><?= $totalKendaraan; ?></h4>
+                    <p class="text-muted">Total Kendaraan</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h4><?= $totalPeminjaman; ?></h4>
+                    <p class="text-muted">Total Peminjaman</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigasi -->
+    <div class="mb-4">
+        <h5>🔧 Aksi Cepat</h5>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="../../pages/user_crud.php" class="btn btn-primary">
+                <i class="bi bi-people"></i> Kelola User
+            </a>
+            <a href="admin_ruangan.php" class="btn btn-success">
+                <i class="bi bi-door-closed"></i> Dashboard Ruangan
+            </a>
+            <a href="admin_kendaraan.php" class="btn btn-warning text-dark">
+                <i class="bi bi-car-front"></i> Dashboard Kendaraan
+            </a>
+        </div>
+    </div>
+
+     <!-- Data User -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <span>👥 Data User</span>
+            <a href="../../pages/user_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah User</a>
+        </div>
+        <div class="card-body table-responsive">
+            <?php
+            $users = $con->query("SELECT * FROM user ORDER BY created_at DESC");
+            ?>
+            <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <!-- <th>Email</th> -->
+                        <th>Role</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($u = $users->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= $u['id']; ?></td>
+                            <td><?= htmlspecialchars($u['nama']); ?></td>
+                            <td><?= htmlspecialchars($u['username']); ?></td>
+                            <td><span class="badge bg-info text-dark"><?= htmlspecialchars($u['role']); ?></span></td>
+                            <td class="text-center">
+                                <a href="../../pages/user_crud.php?edit=<?= $u['id']; ?>" class="btn btn-sm btn-warning me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a href="../../pages/user_crud.php?hapus=<?= $u['id']; ?>" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Hapus user ini?')">
+                                   <i class="bi bi-trash"></i> Hapus
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Daftar Semua Peminjaman -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span>📋 Data Peminjaman Terbaru</span>
+            <!-- <a href="pages/peminjaman_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Peminjaman</a> -->
+        </div>
+        <div class="card-body table-responsive">
+            <?php
+            $result = $con->query("
+                SELECT p.*, u.nama 
+                FROM peminjaman p
+                JOIN user u ON p.id_user = u.id
+                ORDER BY p.created_at DESC
+                LIMIT 15
+            ");
+            ?>
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kode</th>
+                        <th>Nama Peminjam</th>
+                        <th>Jenis</th>
+                        <th>Item</th>
+                        <th>Tanggal Pinjam</th>
+                        <th>Tanggal Kembali</th>
+                        <th>Status</th>
+                        <!-- <th class="text-center">Aksi</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
+                            <td><?= htmlspecialchars($row['nama']); ?></td>
+                            <td><?= ucfirst($row['jenis']); ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
+                            <td>
+                                <?php if ($row['status'] === 'dipinjam'): ?>
+                                    <span class="badge bg-warning text-dark">Dipinjam</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Dikembalikan</span>
+                                <?php endif; ?>
+                            </td>
+                            <!-- <td class="text-center">
+                                <a href="pages/peminjaman_crud.php?edit=<?= $row['id']; ?>" class="btn btn-sm btn-warning me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a href="pages/peminjaman_crud.php?id=<?= $row['id']; ?>" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                   <i class="bi bi-trash"></i> Hapus
+                                </a>
+                            </td> -->
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include("../../includes/footer.php"); ?>
+

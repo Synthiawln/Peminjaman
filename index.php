@@ -3,7 +3,7 @@ session_start();
 include_once("koneksi.php");
 
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+    header('Location: modules/auth/login.php');
     exit();
 }
 
@@ -42,7 +42,7 @@ include("includes/navbar.php");
     </div>
 
 
-    <div class="card mt-5">
+    <div id="riwayat" class="card mt-5">
         <div class="card-header" style="background-color: #746616cf; color: #000;">
             <i class="bi bi-clock-history me-2"></i> Riwayat Peminjaman Anda
         </div>
