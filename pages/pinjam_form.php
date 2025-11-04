@@ -9,6 +9,7 @@ if (!isset($_SESSION['username'])) {
 
 $id_item = $_GET['id'];
 $jenis = $_GET['jenis']; // ruangan atau kendaraan
+$minDate = date('Y-m-d'); 
 ?>
 
 <!DOCTYPE html>
@@ -29,12 +30,12 @@ $jenis = $_GET['jenis']; // ruangan atau kendaraan
 
       <div class="mb-3">
         <label class="form-label">Tanggal Pinjam</label>
-        <input type="date" name="tgl_pinjam" class="form-control" required>
+        <input type="date" name="tgl_pinjam" class="form-control" required min="<?= $minDate ?>">
       </div>
 
       <div class="mb-3">
         <label class="form-label">Tanggal Kembali</label>
-        <input type="date" name="tgl_kembali" class="form-control" required>
+        <input type="date" name="tgl_kembali" class="form-control" required min="<?= $minDate ?>">
       </div>
 
       <div class="mb-3">

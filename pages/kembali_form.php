@@ -6,6 +6,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit();
 }
+$minDate = date('Y-m-d'); 
 
 $username = $_SESSION['username'];
 
@@ -66,7 +67,7 @@ if ($id_peminjaman) {
 
         <div class="mb-3">
           <label class="form-label">Tanggal Pengembalian Aktual</label>
-          <input type="date" name="tgl_kembali_aktual" class="form-control" required>
+          <input type="date" name="tgl_kembali_aktual" class="form-control" required min="<?= $minDate ?>">
         </div>
 
         <button type="submit" class="btn btn-dark w-100">Proses & Cetak Berita Acara</button>

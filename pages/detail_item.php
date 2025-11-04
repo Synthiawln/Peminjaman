@@ -144,7 +144,7 @@ $backLink = ($jenis === 'ruangan') ? 'ruangan.php' : 'kendaraan.php';
                         <p><strong>Kapasitas:</strong> <?= htmlspecialchars($item['kapasitas']) ?> orang</p>
                     <?php else: ?>
                         <p><strong>No. Polisi:</strong> <?= htmlspecialchars($item['no_polisi']) ?></p>
-                        <p><strong>Jenis Kendaraan:</strong> <?= htmlspecialchars($item['jenis_kendaraan'] ?? '-') ?></p>
+                        <p><strong>Keterangan:</strong> <?= htmlspecialchars($item['keterangan'] ?? '-') ?></p>
                     <?php endif; ?>
 
                     <p><strong>Status:</strong>
