@@ -98,7 +98,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <!-- Bar Chart -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Perbandingan Total vs Kendaraan Dipinjam</div>
+                <div class="card-header text-white" style="background-color : #746616cf;">Perbandingan Total vs Kendaraan Dipinjam</div>
                 <div class="card-body">
                     <canvas id="kendaraanChart"></canvas>
                 </div>
@@ -108,7 +108,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <!-- Line Chart Bulanan -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Tren Peminjaman Kendaraan Per Bulan</div>
+                <div class="card-header text-white" style="background-color : #746616cf;">Tren Peminjaman Kendaraan Per Bulan</div>
                 <div class="card-body">
                     <canvas id="lineChartKendaraan"></canvas>
                 </div>
@@ -118,7 +118,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 
     <!-- Line Chart Mingguan -->
     <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white">Tren Peminjaman Kendaraan Per Minggu</div>
+        <div class="card-header text-white" style="background-color : #746616cf;">Tren Peminjaman Kendaraan Per Minggu</div>
         <div class="card-body text-center">
             <canvas id="lineChartKendaraanMinggu" width="500" height="250"></canvas>
         </div>
@@ -126,7 +126,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 
     <!-- CRUD KENDARAAN -->
     <div class="card shadow-sm mb-5">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>Kelola Data Kendaraan</span>
             <a href="../../pages/kendaraan_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Kendaraan</a>
         </div>
@@ -146,13 +146,13 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                         <td><?= htmlspecialchars($k['no_polisi']); ?></td>
                         <td>
                             <?php if ($k['status'] == 'tersedia'): ?>
-                                <span class="badge bg-success">Tersedia</span>
+                                <span class="status-label tersedia">Tersedia</span>
                             <?php else: ?>
-                                <span class="badge bg-warning text-dark">Dipinjam</span>
+                                <span class="status-label dipinjam">Dipinjam</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
-                            <a href="../../pages/kendaraan_crud.php?edit=<?= $k['id']; ?>" class="btn btn-sm btn-warning me-1">
+                            <a href="../../pages/kendaraan_crud.php?edit=<?= $k['id']; ?>" class="btn btn-sm me-1" style="background-color: #9e8a40ff; color: #ffffffff;">
                                 <i class="bi bi-pencil-square"></i> Edit
                             </a>
                             <a href="../../pages/kendaraan_crud.php?hapus=<?= $k['id']; ?>" 
@@ -237,6 +237,21 @@ new Chart(ctxLineMinggu, {
     height: 250px;
     margin: 0 auto;
 }
+.status-label.tersedia {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+.status-label.dipinjam {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+} 
+
 </style>
 
 <?php include("../../includes/footer.php"); ?>

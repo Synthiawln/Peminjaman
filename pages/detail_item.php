@@ -2,41 +2,56 @@
 session_start();
 require_once("../koneksi.php");
 
-if (!isset($_GET['jenis']) || !isset($_GET['id'])) {
-    header('Location: ../index.php');
+// Cek login
+if (!isset($_SESSION['username'])) {
+    header('Location: ../login.php');
     exit();
 }
 
-$jenis = $_GET['jenis']; 
-$id = (int)$_GET['id'];
+// Cek parameter ID
+if (!isset($_GET['id'])) {
+    echo "<h4>Data tidak ditemukan. ID tidak diberikan.</h4>";
+    exit();
+}
 
+$id = (int)$_GET['id'];
+$jenis = $_GET['jenis'] ?? ''; // bisa kosong
+
+// Coba ambil data sesuai jenis
 if ($jenis === 'ruangan') {
-    $stmt = $con->prepare("SELECT * FROM ruangan WHERE id = ?");
+    $stmt = $con->prepare("SELECT *, 'ruangan' AS jenis FROM ruangan WHERE id = ?");
+} elseif ($jenis === 'kendaraan') {
+    $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
 } else {
-    $stmt = $con->prepare("SELECT * FROM kendaraan WHERE id = ?");
+    // Jika jenis tidak ada, coba deteksi otomatis
+    $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
 }
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $res = $stmt->get_result();
 
 if ($res->num_rows === 0) {
-    echo "Item tidak ditemukan.";
+    echo "<h4>Item tidak ditemukan.</h4>";
     exit();
 }
+
 $item = $res->fetch_assoc();
+$jenis = $item['jenis']; // hasil deteksi otomatis
 
 $pageTitle = "Detail Item";
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-$folder = ($jenis === 'ruangan') ? '../gambar/ruangan/' : '../gambar/kendaraan/';
+// Path gambar
 $file = $item['foto'] ?? '';
-$fotoPath = $folder . $file;
+$fotoPath = "../" . $file; // langsung dari database
 
+// Pastikan file ada
 if (empty($file) || !file_exists($fotoPath)) {
-    $fotoPath = $folder . 'no-image.png';
+    $fotoPath = "../uploads/no-image.png"; // default image
 }
 
+// Link kembali
 $backLink = ($jenis === 'ruangan') ? 'ruangan.php' : 'kendaraan.php';
 ?>
 

@@ -99,7 +99,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <!-- Bar Chart -->
         <div class="col-md-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Perbandingan Total vs Ruangan Dipinjam</div>
+                <div class="card-header text-white" style="background-color: #746616cf">Perbandingan Total vs Ruangan Dipinjam</div>
                 <div class="card-body">
                     <canvas id="ruanganChart"></canvas>
                 </div>
@@ -109,7 +109,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <!-- Line Chart Bulanan -->
         <div class="col-md-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Tren Peminjaman Ruangan Per Bulan</div>
+                <div class="card-header text-white" style="background-color: #746616cf">Tren Peminjaman Ruangan Per Bulan</div>
                 <div class="card-body">
                     <canvas id="lineChartRuanganBulan"></canvas>
                 </div>
@@ -119,7 +119,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <!-- Line Chart Mingguan -->
         <div class="col-md-12 mt-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">Tren Peminjaman Ruangan Per Minggu</div>
+                <div class="card-header text-white" style="background-color: #746616cf">Tren Peminjaman Ruangan Per Minggu</div>
                 <div class="card-body">
                     <canvas id="lineChartRuanganMinggu"></canvas>
                 </div>
@@ -129,7 +129,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 
     <!-- CRUD RUANGAN -->
     <div class="card shadow-sm mb-4">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf">
             <span>Kelola Data Ruangan</span>
             <a href="../../pages/ruangan_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Ruangan</a>
         </div>
@@ -149,16 +149,17 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                         <td><?= htmlspecialchars($r['lokasi']); ?></td>
                         <td>
                             <?php if ($r['status'] == 'tersedia'): ?>
-                                <span class="badge bg-success">Tersedia</span>
+                                <span class="status-label tersedia">Tersedia</span>
                             <?php else: ?>
-                                <span class="badge bg-warning text-dark">Dipinjam</span>
+                                <span class="status-label dipinjam">Dipinjam</span>
                             <?php endif; ?>
                         </td>
+
                         <td class="text-center">
-                            <a href="pages/ruangan_crud.php?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning me-1">
+                            <a href="../../pages/ruangan_crud.php?edit=<?= $r['id']; ?>" class="btn btn-sm me-1" style="background-color: #9e8a40ff; color: #ffffffff;">
                                 <i class="bi bi-pencil-square"></i> Edit
                             </a>
-                            <a href="pages/ruangan_crud.php?hapus=<?= $r['id']; ?>" 
+                            <a href="../../pages/ruangan_crud.php?hapus=<?= $r['id']; ?>" 
                                class="btn btn-sm btn-danger"
                                onclick="return confirm('Hapus ruangan ini?')">
                                <i class="bi bi-trash"></i> Hapus
@@ -243,6 +244,20 @@ new Chart(ctxLineMinggu, {
     max-width: 500px;
     height: 250px;
     margin: 0 auto;
+}
+.status-label.tersedia {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+.status-label.dipinjam {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
 }
 </style>
 <?php include("../../includes/footer.php"); ?>

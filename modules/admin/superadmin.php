@@ -79,7 +79,7 @@ include("../../includes/navbar.php");
 
      <!-- Data User -->
     <div class="card shadow-sm mb-5">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>👥 Data User</span>
             <a href="../../pages/user_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah User</a>
         </div>
@@ -104,9 +104,9 @@ include("../../includes/navbar.php");
                             <td><?= $u['id']; ?></td>
                             <td><?= htmlspecialchars($u['nama']); ?></td>
                             <td><?= htmlspecialchars($u['username']); ?></td>
-                            <td><span class="badge bg-info text-dark"><?= htmlspecialchars($u['role']); ?></span></td>
+                            <td><span class="badge text-dark" style="background-color : #d7d0a7cf"><?= htmlspecialchars($u['role']); ?></span></td>
                             <td class="text-center">
-                                <a href="../../pages/user_crud.php?edit=<?= $u['id']; ?>" class="btn btn-sm btn-warning me-1">
+                                <a href="../../pages/user_crud.php?edit=<?= $u['id']; ?>" class="btn btn-sm me-1" style="background-color: #9e8a40ff; color: #ffffffff;">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
                                 <a href="../../pages/user_crud.php?hapus=<?= $u['id']; ?>" 
@@ -124,7 +124,7 @@ include("../../includes/navbar.php");
 
     <!-- Daftar Semua Peminjaman -->
     <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>📋 Data Peminjaman Terbaru</span>
             <!-- <a href="pages/peminjaman_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Peminjaman</a> -->
         </div>
@@ -162,10 +162,10 @@ include("../../includes/navbar.php");
                             <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
                             <td>
                                 <?php if ($row['status'] === 'dipinjam'): ?>
-                                    <span class="badge bg-warning text-dark">Dipinjam</span>
-                                <?php else: ?>
-                                    <span class="badge bg-success">Dikembalikan</span>
-                                <?php endif; ?>
+                                      <span class="status-label tersedia">Tersedia</span>
+                            <?php else: ?>
+                                <span class="status-label dipinjam">Dipinjam</span>
+                            <?php endif; ?>
                             </td>
                             <!-- <td class="text-center">
                                 <a href="pages/peminjaman_crud.php?edit=<?= $row['id']; ?>" class="btn btn-sm btn-warning me-1">
@@ -184,6 +184,21 @@ include("../../includes/navbar.php");
         </div>
     </div>
 </div>
-
+<style>
+    .status-label.tersedia {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+.status-label.dipinjam {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+</style>
 <?php include("../../includes/footer.php"); ?>
 
