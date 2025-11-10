@@ -27,35 +27,35 @@ include("../../includes/navbar.php");
     ?>
 
     <div class="row text-center mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-light">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-danger shadow-sm border-0">
                 <div class="card-body">
-                    <h4><?= $totalUser; ?></h4>
-                    <p class="text-muted">User Terdaftar</p>
+                    <h2 class="fw-bold">5</h2>
+                    <p>User Terdaftar</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-light">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success shadow-sm border-0">
                 <div class="card-body">
-                    <h4><?= $totalRuangan; ?></h4>
-                    <p class="text-muted">Total Ruangan</p>
+                    <h2 class="fw-bold">10</h2>
+                    <p>Total Ruangan</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-light">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning shadow-sm border-0">
                 <div class="card-body">
-                    <h4><?= $totalKendaraan; ?></h4>
-                    <p class="text-muted">Total Kendaraan</p>
+                    <h2 class="fw-bold">10</h2>
+                    <p>Total Kendaraan</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-light">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary shadow-sm border-0">
                 <div class="card-body">
-                    <h4><?= $totalPeminjaman; ?></h4>
-                    <p class="text-muted">Total Peminjaman</p>
+                    <h2 class="fw-bold">13</h2>
+                    <p>Total Peminjaman</p>
                 </div>
             </div>
         </div>
@@ -144,7 +144,7 @@ include("../../includes/navbar.php");
                         <th>Kode</th>
                         <th>Nama Peminjam</th>
                         <th>Jenis</th>
-                        <th>Item</th>
+                        <!-- <th>Item</th> -->
                         <th>Tanggal Pinjam</th>
                         <th>Tanggal Kembali</th>
                         <th>Status</th>
@@ -157,14 +157,14 @@ include("../../includes/navbar.php");
                             <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
                             <td><?= htmlspecialchars($row['nama']); ?></td>
                             <td><?= ucfirst($row['jenis']); ?></td>
-                            <td><?= htmlspecialchars($row['nama_barang'] ?? '-'); ?></td>
+                            <!-- <td><?= htmlspecialchars($row['nama_barang'] ?? '-'); ?></td> -->
                             <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
                             <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
                             <td>
                                 <?php if ($row['status'] === 'dipinjam'): ?>
-                                      <span class="status-label tersedia">Tersedia</span>
+                                      <span class="status-label tersedia">Belum Dikembalikan</span>
                             <?php else: ?>
-                                <span class="status-label dipinjam">Dipinjam</span>
+                                <span class="status-label dipinjam">Sudah Dikembalikan</span>
                             <?php endif; ?>
                             </td>
                             <!-- <td class="text-center">
@@ -186,18 +186,22 @@ include("../../includes/navbar.php");
 </div>
 <style>
     .status-label.tersedia {
-    background-color: #28a745;
+    background-color: #dc3545;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.9em;
 }
 .status-label.dipinjam {
-    background-color: #dc3545;
+    background-color: #28a745;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.9em;
+}
+
+.card h5 {
+  color: #5a4722;
 }
 </style>
 <?php include("../../includes/footer.php"); ?>

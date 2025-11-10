@@ -14,6 +14,7 @@ if (strpos($path, '/modules/admin/') !== false) {
 
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 $nama = isset($_SESSION['nama']) ? $_SESSION['nama'] : 'Guest';
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 
 $systemTitle = 'Sistem Peminjaman';
 $label = 'Home';
@@ -89,7 +90,8 @@ if ($role === 'super_admin') {
           <ul class="dropdown-menu dropdown-menu-end">
             <li><h6 class="dropdown-header">Profil</h6></li>
             <li><a class="dropdown-item" href="#">Nama: <?= htmlspecialchars($nama) ?></a></li>
-            <li><a class="dropdown-item" href="#">Role: <?= htmlspecialchars($role) ?></a></li>
+            <li><a class="dropdown-item" href="#">Username: <?= htmlspecialchars($username) ?></a></li>
+            <li><a class="dropdown-item" href="#">Role:<?= htmlspecialchars($role) ?></a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger fw-semibold" href="<?= $pathPrefix ?>modules/auth/logout.php">Logout</a></li>
           </ul>

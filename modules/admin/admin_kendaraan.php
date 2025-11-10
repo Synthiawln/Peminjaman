@@ -68,26 +68,26 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     <!-- Statistik -->
     <div class="row text-center mb-4">
         <div class="col-md-3">
-            <div class="card shadow-sm border-0">
+            <div class="card text-white bg-danger shadow-sm border-0">
                 <div class="card-body">
                     <h4><?= $totalKendaraan; ?></h4>
-                    <p class="text-muted mb-0">Total Kendaraan</p>
+                    <p>Total Kendaraan</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0">
+            <div class="card text-white bg-success shadow-sm border-0">
                 <div class="card-body">
                     <h4><?= $kendaraanDipinjam; ?></h4>
-                    <p class="text-muted mb-0">Kendaraan Dipinjam</p>
+                    <p>Kendaraan Dipinjam</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0">
+            <div class="card text-white bg-primary shadow-sm border-0">
                 <div class="card-body">
                     <h4><?= $kendaraanTersedia; ?></h4>
-                    <p class="text-muted mb-0">Kendaraan Tersedia</p>
+                    <p>Kendaraan Tersedia</p>
                 </div>
             </div>
         </div>

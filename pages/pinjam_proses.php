@@ -45,8 +45,8 @@ $pdf = new FPDF();
 $pdf->AddPage();
 
 // === KOP SURAT ===
-if (file_exists('../assets/logo.png')) {
-    $pdf->Image('../assets/logo.png', 15, 10, 25);
+if (file_exists('../gambar/logo_BPK.png')) {
+    $pdf->Image('../gambar/logo_BPK.png', 15, 10, 25);
 }
 $pdf->SetFont('Arial', 'B', 14);
 $pdf->Cell(0, 8, 'BADAN PEMERIKSA KEUANGAN', 0, 1, 'C');

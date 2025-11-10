@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             exit();
         } else {
-            $_SESSION['error_message'] = "Password salah!";
+            $_SESSION['error_message'] = "Password atau Email salah!";
         }
     } else {
         $_SESSION['error_message'] = "Username tidak ditemukan!";
