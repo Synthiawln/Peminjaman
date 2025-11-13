@@ -20,9 +20,6 @@ $ruanganTersedia = $con->query("SELECT COUNT(*) AS total FROM ruangan WHERE stat
 $totalPeminjaman = $con->query("SELECT COUNT(*) AS total FROM peminjaman")->fetch_assoc()['total'];
 
 
-// Data untuk Bar Chart
-$chartLabels = ['Total Ruangan', 'Ruangan Dipinjam'];
-$chartData = [$totalRuangan, $ruanganDipinjam];
 
 // Data untuk Line Chart (Bulanan)
 $peminjamanPerBulan = $con->query("
@@ -66,66 +63,76 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     <h3 class="mb-3">Dashboard Admin Ruangan</h3>
     <p class="text-muted">Kelola data peminjaman dan ruangan.</p>
 
-    <!-- Statistik -->
-    <div class="row text-center mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-danger shadow-sm border-0">
-                <div class="card-body">
-                    <h4><?= $totalRuangan; ?></h4>
-                    <p>Total Ruangan</p>
+   <!-- Statistik -->
+<div class="row text-center mb-4 g-4">
+    <!-- Total Ruangan -->
+    <div class="col-md-3">
+        <div class="card text-white bg-danger shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold mb-0"><?= $totalRuangan; ?></h4>
+                    <p class="mb-0">Total Ruangan</p>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success shadow-sm border-0">
-                <div class="card-body">
-                    <h4><?= $ruanganDipinjam; ?></h4>
-                    <p>Ruangan Dipinjam</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-primary shadow-sm border-0">
-                <div class="card-body">
-                    <h4><?= $ruanganTersedia; ?></h4>
-                    <p>Ruangan Tersedia</p>
-                </div>
+                <i class="bi bi-building fs-1 opacity-75"></i>
             </div>
         </div>
     </div>
+
+    <!-- Ruangan Dipinjam -->
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold mb-0"><?= $ruanganDipinjam; ?></h4>
+                    <p class="mb-0">Ruangan Dipinjam</p>
+                </div>
+                <i class="bi bi-door-open-fill fs-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ruangan Tersedia -->
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold mb-0"><?= $ruanganTersedia; ?></h4>
+                    <p class="mb-0">Ruangan Tersedia</p>
+                </div>
+                <i class="bi bi-door-closed-fill fs-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Grafik -->
-    <div class="row mb-4">
-        <!-- Bar Chart -->
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header text-white" style="background-color: #746616cf">Perbandingan Total vs Ruangan Dipinjam</div>
-                <div class="card-body">
-                    <canvas id="ruanganChart"></canvas>
-                </div>
+    <div class="row mb-4 g-4">
+    <!-- Line Chart Mingguan -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header text-white fw-semibold" style="background: linear-gradient(90deg, #8b7d2f, #b6a84c);">
+                <i class="bi bi-graph-up-arrow me-2"></i> Tren Peminjaman Ruangan Per Minggu
             </div>
-        </div>
-
-        <!-- Line Chart Bulanan -->
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header text-white" style="background-color: #746616cf">Tren Peminjaman Ruangan Per Bulan</div>
-                <div class="card-body">
-                    <canvas id="lineChartRuanganBulan"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Line Chart Mingguan -->
-        <div class="col-md-12 mt-4">
-            <div class="card shadow-sm">
-                <div class="card-header text-white" style="background-color: #746616cf">Tren Peminjaman Ruangan Per Minggu</div>
-                <div class="card-body">
-                    <canvas id="lineChartRuanganMinggu"></canvas>
-                </div>
+            <div class="card-body p-4">
+                <canvas id="lineChartRuanganMinggu" style="min-height: 295px;"></canvas>
             </div>
         </div>
     </div>
+
+    <!-- Line Chart Bulanan -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header text-white fw-semibold" style="background: linear-gradient(90deg, #556b2f, #9dc183);">
+                <i class="bi bi-calendar3 me-2"></i> Tren Peminjaman Ruangan Per Bulan
+            </div>
+            <div class="card-body p-4">
+                <canvas id="lineChartRuanganBulan" style="min-height: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+    </div>
+
 
     <!-- CRUD RUANGAN -->
     <div class="card shadow-sm mb-4">
@@ -171,29 +178,59 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             </table>
         </div>
     </div>
+
+    <!-- Riwayat Peminjaman -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+            <i class="bi bi-clock-history me-2"></i> 
+            <span>📋 Riwayat Peminjaman Ruangan Terbaru</span>
+        </div>
+        <div class="card-body table-responsive">
+            <?php
+            $result = $con->query("
+                SELECT p.*, u.nama 
+                FROM peminjaman p
+                JOIN user u ON p.id_user = u.id
+                WHERE jenis = 'ruangan'
+                ORDER BY p.created_at DESC
+                LIMIT 10
+            ");
+            ?>
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kode</th>
+                        <th>Nama Peminjam</th>
+                        <th>Tanggal Pinjam</th>
+                        <th>Tanggal Kembali</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
+                            <td><?= htmlspecialchars($row['nama']); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
+                            <td>
+                                <?php if ($row['status'] === 'dipinjam'): ?>
+                                    <span class="status-label pinjam">Belum Dikembalikan</span>
+                                <?php else: ?>
+                                    <span class="status-label kembali">Sudah Dikembalikan</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- ChartJS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// bar chart
-const ctxBar = document.getElementById('ruanganChart').getContext('2d');
-new Chart(ctxBar, {
-    type: 'bar',
-    data: {
-        labels: <?= json_encode($chartLabels) ?>,
-        datasets: [{
-            label: 'Jumlah Ruangan',
-            data: <?= json_encode($chartData) ?>,
-            backgroundColor: ['#007bff', '#dc3545'],
-        }]
-    },
-    options: { 
-        scales: { y: { beginAtZero: true } },
-        plugins: { legend: { display: false } }
-    }
-});
-
 // linechart bulanan
 const ctxLineBulan = document.getElementById('lineChartRuanganBulan').getContext('2d');
 new Chart(ctxLineBulan, {
@@ -235,8 +272,6 @@ new Chart(ctxLineMinggu, {
         plugins: { legend: { display: true } }
     }
 });
-
-
 </script>
 <style>
 /* Atur ukuran container chart */
@@ -259,5 +294,20 @@ new Chart(ctxLineMinggu, {
     border-radius: 12px;
     font-size: 0.9em;
 }
+.status-label.kembali {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+
+.status-label.pinjam {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+} 
 </style>
 <?php include("../../includes/footer.php"); ?>

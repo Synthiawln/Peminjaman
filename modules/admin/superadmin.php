@@ -28,35 +28,39 @@ include("../../includes/navbar.php");
 
     <div class="row text-center mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card text-white bg-danger shadow-sm border-0">
+            <div class="card text-white bg-danger shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h2 class="fw-bold">5</h2>
+                    <h2 class="fw-bold"><?=$totalUser;?></h2>
                     <p>User Terdaftar</p>
                 </div>
+                <i class="bi bi-people fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-white bg-success shadow-sm border-0">
+            <div class="card text-white bg-success shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h2 class="fw-bold">10</h2>
+                    <h2 class="fw-bold"><?=$totalRuangan;?></h2>
                     <p>Total Ruangan</p>
                 </div>
+                <i class="bi bi-door-closed fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-white bg-warning shadow-sm border-0">
+            <div class="card text-white bg-warning shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h2 class="fw-bold">10</h2>
+                    <h2 class="fw-bold"><?=$totalKendaraan;?></h2>
                     <p>Total Kendaraan</p>
                 </div>
+                <i class="bi bi-car-front fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-white bg-primary shadow-sm border-0">
+            <div class="card text-white bg-primary shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h2 class="fw-bold">13</h2>
+                    <h2 class="fw-bold"><?=$totalPeminjaman;?></h2>
                     <p>Total Peminjaman</p>
                 </div>
+                <i class="bi bi-person-check-fill fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
         </div>
     </div>

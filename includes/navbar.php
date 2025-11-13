@@ -39,67 +39,70 @@ if ($role === 'super_admin') {
 }
 ?>
 
-<nav class="navbar navbar-expand-lg" style="background-color: #746616cf;">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(90deg, #8d7b35, #5e4b1f);">
+  <div class="container-fluid px-4">
     <!-- Logo -->
-    <a class="navbar-brand d-flex align-items-center" href="<?= $link ?>">
-      <img src="<?= $pathPrefix ?>gambar/logo_BPK.png" alt="Logo" width="30" class="me-2">
-      <span class="fw-bold text-dark"><?= htmlspecialchars($systemTitle) ?></span>
+    <a class="navbar-brand d-flex align-items-center fw-bold text-light" href="<?= $link ?>">
+      <img src="<?= $pathPrefix ?>gambar/logo_BPK.png" alt="Logo" width="35" class="me-2 rounded">
+      <?= htmlspecialchars($systemTitle) ?>
     </a>
 
+    <!-- Toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Menu -->
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
         <?php if (in_array($role, ['super_admin', 'admin_ruangan', 'admin_kendaraan'])): ?>
           <li class="nav-item">
-            <a class="nav-link" href="<?= $link ?>"><?= htmlspecialchars($label) ?></a>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Laporan
+            <a class="nav-link text-light fw-semibold" href="<?= $link ?>">
+              <i class="bi bi-speedometer2 me-1"></i> <?= htmlspecialchars($label) ?>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
-              <li><a class="dropdown-item" href="<?= $pathPrefix ?>pages/roports_weekly.php">Mingguan</a></li>
-              <li><a class="dropdown-item" href="<?= $pathPrefix ?>pages/reports_monthly.php">Bulanan</a></li>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-light fw-semibold" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-file-earmark-text me-1"></i> Laporan
+            </a>
+            <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="reportsDropdown">
+              <li><a class="dropdown-item" href="<?= $pathPrefix ?>pages/roports_weekly.php">📅 Laporan Mingguan</a></li>
+              <li><a class="dropdown-item" href="<?= $pathPrefix ?>pages/reports_monthly.php">📆 Laporan Bulanan</a></li>
             </ul>
           </li>
-
         <?php else: ?>
           <li class="nav-item">
-            <a class="nav-link" href="<?= $pathPrefix ?>index.php">Home</a>
+            <a class="nav-link text-light fw-semibold" href="<?= $pathPrefix ?>index.php">🏠 Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#riwayat">Riwayat</a>
+            <a class="nav-link text-light fw-semibold" href="#riwayat">📜 Riwayat</a>
           </li>
         <?php endif; ?>
       </ul>
 
-      <!-- Dropdown User -->
+      <!-- User Dropdown -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-            <img src="<?= $pathPrefix ?>gambar/logo_user.png" alt="User Icon" width="28" height="28" class="me-2">
-            <?= htmlspecialchars($nama) ?> 
-            <!-- (<?= htmlspecialchars($role ?: 'guest') ?>) -->
+          <a class="nav-link dropdown-toggle d-flex align-items-center text-light fw-semibold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+            <img src="<?= $pathPrefix ?>gambar/logo_user.png" alt="User" width="32" height="32" class="rounded-circle me-2 border border-light">
+            <?= htmlspecialchars($nama) ?>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><h6 class="dropdown-header">Profil</h6></li>
-            <li><a class="dropdown-item" href="#">Nama: <?= htmlspecialchars($nama) ?></a></li>
-            <li><a class="dropdown-item" href="#">Username: <?= htmlspecialchars($username) ?></a></li>
-            <li><a class="dropdown-item" href="#">Role:<?= htmlspecialchars($role) ?></a></li>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+            <li><h6 class="dropdown-header">👤 Profil Pengguna</h6></li>
+            <li><a class="dropdown-item"><?= htmlspecialchars($nama) ?></a></li>
+            <li><a class="dropdown-item"><?= htmlspecialchars($username) ?></a></li>
+            <!-- <li><a class="dropdown-item">Role: <?= htmlspecialchars($role) ?></a></li> -->
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger fw-semibold" href="<?= $pathPrefix ?>modules/auth/logout.php">Logout</a></li>
+            <li><a class="dropdown-item text-danger fw-semibold" href="<?= $pathPrefix ?>modules/auth/logout.php">
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </a></li>
           </ul>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
 
 <!-- Smooth Scroll -->
 <script>
@@ -121,8 +124,14 @@ document.addEventListener("DOMContentLoaded", () => {
   transition: all 0.3s ease;
 }
 .navbar-nav .nav-link:hover {
-  background-color: #74652fff;
-  border-radius: 5px;
-  transform: translateY(-1px);
+  color: #ffd966 !important;
+  transform: translateY(-2px);
+}
+.dropdown-menu a:hover {
+  background-color: #f9f2d7;
+}
+.navbar {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
 }
 </style>
