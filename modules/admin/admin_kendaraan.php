@@ -77,8 +77,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4><?= $totalPeminjaman; ?></h4>
-                        <p class="mb-0">Total Peminjaman</p>
+                        <h4><?= $kendaraanDipinjam; ?></h4>
+                        <p class="mb-0">Kendaraan Dipinjam</p>
                     </div>
                 </div>
                 <i class="bi bi-arrow-repeat fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>

@@ -60,7 +60,7 @@ if ($_SESSION['role'] == 'super_admin') {
         ⬇️ Download CSV
     </button>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-4 rounded-4">
         <div class="card-body">
             <h5 class="card-title">📊 Laporan Berdasarkan Bulan</h5>
             <table id="laporanTable" class="table table-striped table-bordered align-middle">
@@ -85,7 +85,7 @@ if ($_SESSION['role'] == 'super_admin') {
     </div>
 
     <?php if ($_SESSION['role'] == 'super_admin' && $qJenis): ?>
-    <div class="card shadow-sm">
+    <div class="card shadow-sm rounded-4">
         <div class="card-body">
             <h5 class="card-title">📈 Laporan Perbandingan Jenis Peminjaman</h5>
             <p class="text-muted">Menampilkan jumlah peminjaman tiap bulan berdasarkan jenis (ruangan vs kendaraan).</p>
