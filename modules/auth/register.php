@@ -120,6 +120,10 @@ include_once(__DIR__ . "/../../koneksi.php");
                 <input type="text" class="form-control" id="username" name="username" required placeholder="Masukkan username">
             </div>
             <div class="mb-3">
+                <label for="nama" class="form-label">NIP</label>
+                <input type="text" class="form-control" id="nip" name="nip" required placeholder="Masukkan nama lengkap">
+            </div>
+            <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required placeholder="Masukkan password">
             </div>

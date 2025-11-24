@@ -3,118 +3,215 @@ session_start();
 include '../koneksi.php';
 require('../fpdf/fpdf.php');
 
-// Pastikan user sudah login
+// =======================================
+// CEK LOGIN
+// =======================================
 if (!isset($_SESSION['username'])) {
     header('Location: ../login.php');
     exit();
 }
 
 $username = $_SESSION['username'];
-$id_item = $_POST['id_item'];
-$jenis = $_POST['jenis']; 
-$tgl_pinjam = $_POST['tgl_pinjam'];
-$tgl_kembali = $_POST['tgl_kembali'];
-$penanggung_jawab = $_POST['penanggung_jawab'];
 
-// Ambil id_user berdasarkan username
-$stmt_user = $con->prepare("SELECT id, nama FROM user WHERE username = ?");
-$stmt_user->bind_param("s", $username);
-$stmt_user->execute();
-$result_user = $stmt_user->get_result();
-$user = $result_user->fetch_assoc();
+// =======================================
+// AMBIL DATA USER (PIHAK KEDUA)
+// =======================================
+$stmt = $con->prepare("SELECT id, nama, nip FROM user WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
 $id_user = $user['id'];
 $nama_user = $user['nama'];
+$nip_user  = $user['nip'] ?? '-';
 
-// Generate nomor unik Berita Acara
-$nomor_ba = 'BA-' . date('Ymd') . '-' . rand(100, 999);
+// =======================================
+// DATA FORM
+// =======================================
+$id_item          = $_POST['id_item'];
+$jenis            = $_POST['jenis'];  // ruangan / kendaraan
+$tgl_pinjam       = $_POST['tgl_pinjam'];
+$tgl_kembali      = $_POST['tgl_kembali'];
+$penanggung_jawab = $_POST['penanggung_jawab'];
 
-// Simpan ke tabel peminjaman
-$stmt = $con->prepare("
+// =======================================
+// ARRAY BULAN
+// =======================================
+$bulanIndo = [
+    '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni',
+    '07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'
+];
+
+function tanggalIndo($tgl, $bulanIndo) {
+    $d = date('d', strtotime($tgl));
+    $m = date('m', strtotime($tgl));
+    $y = date('Y', strtotime($tgl));
+    return "$d {$bulanIndo[$m]} $y";
+}
+
+// =======================================
+// NOMOR BERITA ACARA
+// =======================================
+$nomor_ba = "BA." . date("Y") . "/TI/" . str_pad(rand(1,200), 3, "0", STR_PAD_LEFT);
+
+// =======================================
+// INSERT DATABASE
+// =======================================
+$stmt_in = $con->prepare("
     INSERT INTO peminjaman 
-    (kode_peminjaman, id_user, jenis, id_item, tanggal_pinjam, tanggal_kembali, lo, status) 
+    (kode_peminjaman, id_user, jenis, id_item, tanggal_pinjam, tanggal_kembali, lo, status)
     VALUES (?, ?, ?, ?, ?, ?, ?, 'dipinjam')
 ");
-$stmt->bind_param("sisssss", $nomor_ba, $id_user, $jenis, $id_item, $tgl_pinjam, $tgl_kembali, $penanggung_jawab);
-$stmt->execute();
 
-// Ubah status item (ruangan/kendaraan) jadi 'dipinjam'
+$stmt_in->bind_param("sisssss",
+    $nomor_ba,
+    $id_user,
+    $jenis,
+    $id_item,
+    $tgl_pinjam,
+    $tgl_kembali,
+    $penanggung_jawab
+);
+
+$stmt_in->execute();
+
+// update status item
 $con->query("UPDATE $jenis SET status='dipinjam' WHERE id=$id_item");
 
-// ==== GENERATE PDF BERITA ACARA ====
-$pdf = new FPDF();
+// =======================================
+// KELAS PDF
+// =======================================
+class PDF extends FPDF {
+    function Header() {
+        if (file_exists('../gambar/logo_BPK.png')) {
+            $this->Image('../gambar/logo_BPK.png', 95, 10, 20);
+        }
+
+        $this->Ln(23);
+        $this->SetFont('Arial','B',12);
+        $this->Cell(0,6,'BADAN PEMERIKSA KEUANGAN',0,1,'C');
+        $this->Cell(0,6,'PERWAKILAN PROVINSI DAERAH ISTIMEWA YOGYAKARTA',0,1,'C');
+
+        $this->SetFont('Arial','',10);
+        $this->Cell(0,5,'Jl. HOS Cokroaminoto No. 52 Yogyakarta 55244 Telp. (0274) 563635',0,1,'C');
+        $this->Ln(2);
+        $this->Cell(0,0,'','T');
+        $this->Ln(8);
+    }
+}
+
+$pdf = new PDF();
 $pdf->AddPage();
+$pdf->SetFont('Arial','B',12);
 
-// === KOP SURAT ===
-if (file_exists('../gambar/logo_BPK.png')) {
-    $pdf->Image('../gambar/logo_BPK.png', 15, 10, 25);
-}
-$pdf->SetFont('Arial', 'B', 14);
-$pdf->Cell(0, 8, 'BADAN PEMERIKSA KEUANGAN', 0, 1, 'C');
-$pdf->SetFont('Arial', '', 12);
-$pdf->Cell(0, 8, 'Subbag Umum dan Teknologi Informasi', 0, 1, 'C');
-$pdf->SetFont('Arial', '', 10);
-$pdf->Cell(0, 6, 'Jl. HOS Cokroaminoto No.52, Tegalrejo, Kec. Tegalrejo, Kota Yogyakarta, Daerah Istimewa Yogyakarta', 0, 1, 'C');
-$pdf->Cell(0, 6, 'Email: humastu.yogyakarta@bpk.go.id | Telp. 0274-563635', 0, 1, 'C');
+// =======================================
+// JUDUL
+// =======================================
+$pdf->Cell(0,7,'BERITA ACARA PINJAM PAKAI ' . strtoupper($jenis),0,1,'C');
+$pdf->Ln(1);
+
+$pdf->SetFont('Arial','',11);
+$pdf->Cell(0,6,"Nomor: ".$nomor_ba,0,1,'C');
+$pdf->Ln(8);
+
+// =======================================
+// PARAGRAF PEMBUKA
+// =======================================
+$tanggal_surat = tanggalIndo(date('Y-m-d'), $bulanIndo);
+
+$pdf->MultiCell(0,6,
+"Pada tanggal $tanggal_surat, yang bertanda tangan di bawah ini:",
+0,'J'
+);
 $pdf->Ln(3);
-$pdf->Cell(0, 0, '', 'T');
-$pdf->Ln(10);
 
-// === JUDUL SURAT ===
-$pdf->SetFont('Arial', 'B', 14);
-$pdf->Cell(0, 8, 'BERITA ACARA PEMINJAMAN ' . strtoupper($jenis), 0, 1, 'C');
+// =======================================
+// PIHAK PERTAMA
+// =======================================
+$pdf->SetFont('Arial','B',11);
+$pdf->Cell(0,6,'PIHAK PERTAMA',0,1);
+
+$pdf->SetFont('Arial','',11);
+$pdf->Cell(45,6,'Nama',0,0);
+$pdf->Cell(0,6,': '.$penanggung_jawab,0,1);
+
+$pdf->Cell(45,6,'NIP',0,0);
+$pdf->Cell(0,6,': -',0,1);
+
+$pdf->Cell(45,6,'Jabatan',0,0);
+$pdf->Cell(0,6,': Penanggung Jawab',0,1);
+
 $pdf->Ln(5);
 
-$pdf->SetFont('Arial', '', 12);
-$pdf->Cell(50, 8, 'Nomor', 0, 0);
-$pdf->Cell(0, 8, ': ' . $nomor_ba, 0, 1);
-$pdf->Ln(4);
+// =======================================
+// PIHAK KEDUA
+// =======================================
+$pdf->SetFont('Arial','B',11);
+$pdf->Cell(0,6,'PIHAK KEDUA',0,1);
 
-// === ISI NASKAH ===
-$teks = "Pada hari ini, tanggal " . date('d-m-Y') . ", telah dilakukan kegiatan peminjaman "
-      . $jenis . " oleh:\n"
-      . "Nama Peminjam     : " . $nama_user . "\n"
-      . "Penanggung Jawab  : " . $penanggung_jawab . "\n"
-      . "Tanggal Pinjam    : " . $tgl_pinjam . "\n"
-      . "Tanggal Kembali   : " . $tgl_kembali . "\n\n"
-      . "Dengan ini, pihak peminjam bertanggung jawab penuh atas penggunaan fasilitas tersebut "
-      . "dan bersedia mengembalikannya dalam kondisi baik dan tepat waktu.\n"
-      . "Demikian berita acara ini dibuat dengan sebenarnya untuk dapat digunakan sebagaimana mestinya.";
+$pdf->SetFont('Arial','',11);
+$pdf->Cell(45,6,'Nama',0,0);
+$pdf->Cell(0,6,': '.$nama_user,0,1);
 
-$pdf->MultiCell(0, 6, $teks);
-$pdf->Ln(10);
+$pdf->Cell(45,6,'NIP',0,0);
+$pdf->Cell(0,6,': '.$nip_user,0,1);
 
-// === TANDA TANGAN ===
-$pdf->SetFont('Arial', '', 12);
-$pdf->Cell(0, 10, 'Yogyakarta, ' . date('d F Y'), 0, 1, 'R');
+$pdf->Cell(45,6,'Jabatan',0,0);
+$pdf->Cell(0,6,': Pegawai',0,1);
+
 $pdf->Ln(5);
 
-$colWidth = 90;
-$pdf->Cell($colWidth, 10, 'Peminjam,', 0, 0, 'C');
-$pdf->Cell($colWidth, 10, 'Penanggung Jawab,', 0, 1, 'C');
-$pdf->Ln(25); // ruang tanda tangan
+// =======================================
+// DETAIL PEMINJAMAN
+// =======================================
+$pdf->SetFont('Arial','',11);
+$pdf->MultiCell(0,6,'Telah dilakukan serah terima ' . strtoupper($jenis) . ':',0,'J');
 
-$pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell($colWidth, 10, '(' . $nama_user . ')', 0, 0, 'C');
-$pdf->Cell($colWidth, 10, '(' . $penanggung_jawab . ')', 0, 1, 'C');
+$pdf->MultiCell(0,6,
+"Kode Peminjaman  : ".$nomor_ba."\n".
+"Tanggal Pinjam   : ".tanggalIndo($tgl_pinjam, $bulanIndo)."\n".
+"Tanggal Kembali  : ".tanggalIndo($tgl_kembali, $bulanIndo),
+0,'J');
 
-$pdf->Ln(4);
-$pdf->SetFont('Arial', '', 11);
-$pdf->Cell($colWidth, 10, 'NIP/NIK: ....................', 0, 0, 'C');
-$pdf->Cell($colWidth, 10, 'NIP/NIK: ....................', 0, 1, 'C');
+$pdf->Ln(8);
 
-$pdf->Ln(15);
-$pdf->SetFont('Arial', 'I', 10);
-$pdf->Cell(0, 10, 'Dokumen ini dibuat secara otomatis melalui sistem peminjaman aset instansi.', 0, 1, 'C');
+// =======================================
+// PARAGRAF PENUTUP
+// =======================================
+$pdf->MultiCell(0,6,
+ ucfirst($jenis) . " tersebut diserahkan dalam keadaan baik. Pihak Kedua berkewajiban menjaga dan bertanggung jawab apabila terjadi kerusakan atau kehilangan.
 
-// === SIMPAN PDF ===
-if (!is_dir('pdf-pinjam')) {
-    mkdir('pdf-pinjam', 0777, true);
-}
+Demikian berita acara ini dibuat untuk dipergunakan sebagaimana mestinya.",
+0,'J'
+);
 
-$pdf_file = 'pdf-pinjam/' . $nomor_ba . '.pdf';
-$pdf->Output('F', $pdf_file);
+$pdf->Ln(10);
 
-// Redirect ke halaman cetak
-header("Location: cetak_BA.php?file=" . urlencode($pdf_file) . "&nomor_ba=" . urlencode($nomor_ba));
+// =======================================
+// TANDA TANGAN
+// =======================================
+$col = 90;
+
+$pdf->SetFont('Arial','',11);
+$pdf->Cell($col,6,'Pihak Pertama,',0,0,'C');
+$pdf->Cell($col,6,'Pihak Kedua,',0,1,'C');
+
+$pdf->Ln(20);
+
+$pdf->SetFont('Arial','BU',11);
+$pdf->Cell($col,6,$penanggung_jawab,0,0,'C');
+$pdf->Cell($col,6,$nama_user,0,1,'C');
+
+$pdf->Ln(2);
+
+$pdf->SetFont('Arial','',10);
+$pdf->Cell($col,5,'NIP. -',0,0,'C');
+$pdf->Cell($col,5,'NIP. '.$nip_user,0,1,'C');
+
+// =======================================
+// OUTPUT (TAMPILKAN SAJA)
+// =======================================
+$pdf->Output("I", "Berita_Acara_".$nomor_ba.".pdf");
 exit;
+
 ?>

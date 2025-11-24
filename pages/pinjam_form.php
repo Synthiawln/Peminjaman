@@ -24,7 +24,7 @@ $minDate = date('Y-m-d');
   <div class="card p-4 shadow-lg rounded-3">
     <h3 class="text-center mb-4">Form Peminjaman <?= ucfirst($jenis) ?></h3>
 
-    <form action="pinjam_proses.php" method="POST">
+    <form action="pinjam_proses.php" method="POST"  target="_blank">
       <input type="hidden" name="id_item" value="<?= htmlspecialchars($id_item) ?>">
       <input type="hidden" name="jenis" value="<?= htmlspecialchars($jenis) ?>">
 
@@ -47,5 +47,12 @@ $minDate = date('Y-m-d');
     </form>
   </div>
 </div>
+  <script>
+  document.querySelector("form").addEventListener("submit", function() {
+      setTimeout(function() {
+          window.location.href = "../index.php";
+      }, 500);
+  });
+  </script>
 </body>
 </html>

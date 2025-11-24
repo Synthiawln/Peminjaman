@@ -15,7 +15,7 @@ if (strpos($path, '/modules/admin/') !== false) {
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 $nama = isset($_SESSION['nama']) ? $_SESSION['nama'] : 'Guest';
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-
+$nip = isset($_SESSION['nip']) ? $_SESSION['nip'] : '';
 $systemTitle = 'Sistem Peminjaman';
 $label = 'Home';
 $link = $pathPrefix . 'index.php';
@@ -80,25 +80,63 @@ if ($role === 'super_admin') {
         <?php endif; ?>
       </ul>
 
-      <!-- User Dropdown -->
+            <!-- User Dropdown -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center text-light fw-semibold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-            <img src="<?= $pathPrefix ?>gambar/logo_user.png" alt="User" width="32" height="32" class="rounded-circle me-2 border border-light">
+          <a class="nav-link dropdown-toggle d-flex align-items-center text-light fw-semibold"
+            href="#"
+            id="userDropdown"
+            role="button"
+            data-bs-toggle="dropdown">
+            
+            <img src="<?= $pathPrefix ?>gambar/logo_user.png"
+                alt="User"
+                width="32"
+                height="32"
+                class="rounded-circle me-2 border border-light">
             <?= htmlspecialchars($nama) ?>
           </a>
+
           <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-            <li><h6 class="dropdown-header">👤 Profil Pengguna</h6></li>
-            <li><a class="dropdown-item"><?= htmlspecialchars($nama) ?></a></li>
-            <li><a class="dropdown-item"><?= htmlspecialchars($username) ?></a></li>
-            <!-- <li><a class="dropdown-item">Role: <?= htmlspecialchars($role) ?></a></li> -->
+            <li>
+              <h6 class="dropdown-header">
+                <i class="bi bi-person-fill me-1"></i> Profil Pengguna
+              </h6>
+            </li>
+
+            <li>
+              <a class="dropdown-item">
+                <small class="text-muted d-block">Nama</small>
+                <?= htmlspecialchars($nama) ?>
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item">
+                <small class="text-muted d-block">Username</small>
+                <?= htmlspecialchars($username) ?>
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item">
+                <small class="text-muted d-block">NIP</small>
+                <?= htmlspecialchars($nip) ?>
+              </a>
+            </li>
+
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger fw-semibold" href="<?= $pathPrefix ?>modules/auth/logout.php">
-              <i class="bi bi-box-arrow-right me-1"></i> Logout
-            </a></li>
+
+            <li>
+              <a class="dropdown-item text-danger fw-semibold"
+                href="<?= $pathPrefix ?>modules/auth/logout.php">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+              </a>
+            </li>
           </ul>
         </li>
       </ul>
+
     </div>
   </div>
 </nav>
