@@ -179,7 +179,7 @@ $pdf->Ln(8);
 // PARAGRAF PENUTUP
 // =======================================
 $pdf->MultiCell(0,6,
- ucfirst($jenis) . " tersebut diserahkan dalam keadaan baik. Pihak Kedua berkewajiban menjaga dan bertanggung jawab apabila terjadi kerusakan atau kehilangan.
+ ucfirst($jenis) . " tersebut diserahkan oleh Pihak Pertama kepada Pihak Kedua dalam keadaan baik. Pihak Kedua berkewajiban menjaga dan bertanggung jawab apabila terjadi kerusakan atau kehilangan.
 
 Demikian berita acara ini dibuat untuk dipergunakan sebagaimana mestinya.",
 0,'J'
@@ -207,6 +207,11 @@ $pdf->Ln(2);
 $pdf->SetFont('Arial','',10);
 $pdf->Cell($col,5,'NIP. -',0,0,'C');
 $pdf->Cell($col,5,'NIP. '.$nip_user,0,1,'C');
+
+// FOOTER NOTE (opsional)
+$pdf->Ln(8);
+$pdf->SetFont('Arial','I',9);
+$pdf->Cell(0,6,'Dokumen ini dibuat otomatis oleh sistem peminjaman aset instansi.',0,1,'C');
 
 // =======================================
 // OUTPUT (TAMPILKAN SAJA)

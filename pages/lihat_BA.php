@@ -154,6 +154,11 @@ $pdf->SetFont('Arial','',10);
 $pdf->Cell($col,5,'NIP. -',0,0,'C');
 $pdf->Cell($col,5,'NIP. -',0,1,'C');
 
+// FOOTER NOTE (opsional)
+$pdf->Ln(8);
+$pdf->SetFont('Arial','I',9);
+$pdf->Cell(0,6,'Dokumen ini dibuat otomatis oleh sistem peminjaman aset instansi.',0,1,'C');
+
 $pdf->Output("I", "BA_Pengembalian_".$data['kode_peminjaman'].".pdf");
 exit;
 ?>
