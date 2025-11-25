@@ -2,7 +2,7 @@
 session_start();
 include_once("../../koneksi.php");
 
-//authentication
+
 $adminRoles = ['admin_ruangan','super_admin'];
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../auth/login.php');
@@ -13,15 +13,13 @@ $pageTitle = "Dashboard Admin Ruangan";
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 
-// Statistik jumlah ruangan & peminjaman
+
 $totalRuangan = $con->query("SELECT COUNT(*) AS total FROM ruangan")->fetch_assoc()['total'];
 $ruanganDipinjam = $con->query("SELECT COUNT(*) AS total FROM ruangan WHERE status='dipinjam'")->fetch_assoc()['total'];
 $ruanganTersedia = $con->query("SELECT COUNT(*) AS total FROM ruangan WHERE status='tersedia'")->fetch_assoc()['total'];
 $totalPeminjaman = $con->query("SELECT COUNT(*) AS total FROM peminjaman")->fetch_assoc()['total'];
 
 
-
-// Data untuk Line Chart (Bulanan)
 $peminjamanPerBulan = $con->query("
     SELECT DATE_FORMAT(tanggal_pinjam, '%M %Y') AS bulan, COUNT(*) AS total
     FROM peminjaman
@@ -37,7 +35,7 @@ while ($r = $peminjamanPerBulan->fetch_assoc()) {
     $lineData[] = (int)$r['total'];
 }
 
-// Data untuk Line Chart (Mingguan)
+
 $peminjamanPerMinggu = $con->query("
     SELECT 
         YEAR(tanggal_pinjam) AS tahun,
@@ -63,9 +61,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     <h3 class="mb-3">Dashboard Admin Ruangan</h3>
     <p class="text-muted">Kelola data peminjaman dan ruangan.</p>
 
-   <!-- Statistik -->
+   
 <div class="row text-center mb-4 g-4">
-    <!-- Total Ruangan -->
+    
     <div class="col-md-3">
         <div class="card text-white bg-danger shadow-sm border-0 rounded-4">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -78,7 +76,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Ruangan Dipinjam -->
+   
     <div class="col-md-3">
         <div class="card text-white bg-success shadow-sm border-0 rounded-4">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -91,7 +89,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Ruangan Tersedia -->
+   
     <div class="col-md-3">
         <div class="card text-white bg-primary shadow-sm border-0 rounded-4">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -106,9 +104,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 </div>
 
 
-    <!-- Grafik -->
+    
     <div class="row mb-4 g-4">
-    <!-- Line Chart Mingguan -->
+   
     <div class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
             <div class="card-header text-white fw-semibold" style="background: linear-gradient(90deg, #8b7d2f, #b6a84c);">
@@ -120,7 +118,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Line Chart Bulanan -->
+   
     <div class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
             <div class="card-header text-white fw-semibold" style="background: linear-gradient(90deg, #556b2f, #9dc183);">
@@ -134,7 +132,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
 
 
-    <!-- CRUD RUANGAN -->
+   
     <div class="card shadow-sm mb-4">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf">
             <span>Kelola Data Ruangan</span>
@@ -179,7 +177,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Riwayat Peminjaman -->
+    
     <div class="card shadow-sm mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
             <i class="bi bi-clock-history me-2"></i> 
@@ -228,10 +226,10 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
 </div>
 
-<!-- ChartJS -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// linechart bulanan
+
 const ctxLineBulan = document.getElementById('lineChartRuanganBulan').getContext('2d');
 new Chart(ctxLineBulan, {
     type: 'line',
@@ -252,7 +250,7 @@ new Chart(ctxLineBulan, {
     }
 });
 
-// linechart perminggu
+
 const ctxLineMinggu = document.getElementById('lineChartRuanganMinggu').getContext('2d');
 new Chart(ctxLineMinggu, {
     type: 'line',
@@ -274,7 +272,7 @@ new Chart(ctxLineMinggu, {
 });
 </script>
 <style>
-/* Atur ukuran container chart */
+
 #lineChartRuanganMinggu {
     max-width: 500px;
     height: 250px;

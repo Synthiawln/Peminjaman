@@ -79,11 +79,11 @@ $res = $stmt->get_result();
   background-color: #74652fff !important;
 }
 
-/* 🔹 Badge tampilan lembut */
+
 .badge-tersedia {
   background-color: #28a745 !important;
   color: #fff !important;
-  border-radius: 50px !important; /* bikin bentuk lonjong */
+  border-radius: 50px !important; 
   padding: 6px 14px !important;
   font-size: 0.9rem;
   font-weight: 500;

@@ -2,7 +2,7 @@
 session_start();
 include_once("../../koneksi.php");
 
-// atuhentication
+
 $adminRoles = array('super_admin');
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../auth/login.php');
@@ -18,7 +18,7 @@ include("../../includes/navbar.php");
     <h3 class="mb-3">Dashboard Super Admin</h3>
     <p class="text-muted">Pantau dan kelola seluruh aktivitas sistem (user, ruangan, kendaraan, dan peminjaman).</p>
 
-    <!-- Statistik Utama -->
+    
     <?php
     $totalUser = $con->query("SELECT COUNT(*) AS total FROM user")->fetch_assoc()['total'];
     $totalRuangan = $con->query("SELECT COUNT(*) AS total FROM ruangan")->fetch_assoc()['total'];
@@ -65,7 +65,7 @@ include("../../includes/navbar.php");
         </div>
     </div>
 
-    <!-- Navigasi -->
+    
     <div class="mb-4">
         <h5>🔧 Aksi Cepat</h5>
         <div class="d-flex flex-wrap gap-2">
@@ -81,7 +81,7 @@ include("../../includes/navbar.php");
         </div>
     </div>
 
-     <!-- Data User -->
+    
     <div class="card shadow-sm mb-5">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>👥 Data User</span>
@@ -97,7 +97,6 @@ include("../../includes/navbar.php");
                         <th>ID</th>
                         <th>Nama</th>
                         <th>Username</th>
-                        <!-- <th>Email</th> -->
                         <th>Role</th>
                         <th class="text-center">Aksi</th>
                     </tr>
@@ -126,11 +125,10 @@ include("../../includes/navbar.php");
         </div>
     </div>
 
-    <!-- Daftar Semua Peminjaman -->
+
     <div class="card shadow-sm mb-4">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>📋 Data Peminjaman Terbaru</span>
-            <!-- <a href="pages/peminjaman_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Peminjaman</a> -->
         </div>
         <div class="card-body table-responsive">
             <?php
@@ -148,11 +146,9 @@ include("../../includes/navbar.php");
                         <th>Kode</th>
                         <th>Nama Peminjam</th>
                         <th>Jenis</th>
-                        <!-- <th>Item</th> -->
                         <th>Tanggal Pinjam</th>
                         <th>Tanggal Kembali</th>
                         <th>Status</th>
-                        <!-- <th class="text-center">Aksi</th> -->
                     </tr>
                 </thead>
                 <tbody>

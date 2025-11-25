@@ -133,9 +133,7 @@ $pdf->MultiCell(0,6,
 
 $pdf->Ln(10);
 
-// ==========================
-// TANDA TANGAN
-// ==========================
+
 $col = 90;
 
 $pdf->SetFont('Arial','',11);
@@ -154,7 +152,7 @@ $pdf->SetFont('Arial','',10);
 $pdf->Cell($col,5,'NIP. -',0,0,'C');
 $pdf->Cell($col,5,'NIP. -',0,1,'C');
 
-// FOOTER NOTE (opsional)
+
 $pdf->Ln(8);
 $pdf->SetFont('Arial','I',9);
 $pdf->Cell(0,6,'Dokumen ini dibuat otomatis oleh sistem peminjaman aset instansi.',0,1,'C');

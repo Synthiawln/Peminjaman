@@ -2,7 +2,7 @@
 session_start();
 include_once("../koneksi.php");
 
-// Hanya admin tertentu yang boleh mengakses
+
 $adminRoles = ['super_admin', 'admin_ruangan', 'admin_kendaraan'];
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../modules/auth/login.php');
@@ -13,7 +13,7 @@ $pageTitle = "Laporan Bulanan";
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-// Filter jenis peminjaman jika bukan super admin
+
 $where = "";
 if ($_SESSION['role'] == 'admin_ruangan') {
     $where = "WHERE jenis = 'ruangan'";
@@ -21,7 +21,7 @@ if ($_SESSION['role'] == 'admin_ruangan') {
     $where = "WHERE jenis = 'kendaraan'";
 }
 
-// Query laporan per bulan berdasarkan jenis
+
 $q = $con->query("
     SELECT 
         YEAR(tanggal_pinjam) AS tahun,
@@ -33,7 +33,7 @@ $q = $con->query("
     ORDER BY tahun DESC, MONTH(tanggal_pinjam) DESC
 ");
 
-// Query tambahan: jika super_admin, tampilkan juga perbandingan antar jenis
+
 $qJenis = null;
 if ($_SESSION['role'] == 'super_admin') {
     $qJenis = $con->query("

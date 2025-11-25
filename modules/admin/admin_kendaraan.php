@@ -2,7 +2,7 @@
 session_start();
 include_once("../../koneksi.php");
 
-// authentication
+
 $adminRoles = ['admin_kendaraan', 'super_admin'];
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../auth/login.php');
@@ -13,14 +13,13 @@ $pageTitle = "Dashboard Admin Kendaraan";
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 
-// statistik
+
 $totalKendaraan = $con->query("SELECT COUNT(*) AS total FROM kendaraan")->fetch_assoc()['total'];
 $kendaraanDipinjam = $con->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='dipinjam'")->fetch_assoc()['total'];
 $kendaraanTersedia = $con->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='tersedia'")->fetch_assoc()['total'];
 $totalPeminjaman = $con->query("SELECT COUNT(*) AS total FROM peminjaman")->fetch_assoc()['total'];
 
 
-// data line chart
 $peminjamanPerBulan = $con->query("
     SELECT DATE_FORMAT(tanggal_pinjam, '%M %Y') AS bulan, COUNT(*) AS total
     FROM peminjaman
@@ -36,7 +35,7 @@ while ($r = $peminjamanPerBulan->fetch_assoc()) {
     $lineData[] = (int)$r['total'];
 }
 
-// 📆 Data Line Chart per Minggu
+
 $peminjamanPerMinggu = $con->query("
     SELECT 
         YEAR(tanggal_pinjam) AS tahun,
@@ -60,7 +59,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 <div class="container mt-4">
     <p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
 
-    <!-- Statistik -->
+    
     <div class="row text-center mb-4 g-4">
         <div class="col-md-3">
             <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100">
@@ -97,9 +96,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Grafik -->
+   
      <div class="row mb-4 g-4">
-        <!-- Line Chart Kendaraan Per Minggu -->
+       
         <div class="col-md-6">
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="card-header text-white fw-semibold d-flex align-items-center" style="background: linear-gradient(90deg, #c9890b, #f5c542);">
@@ -111,7 +110,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
         </div>
 
-        <!-- Line Chart Kendaraan Per Bulan -->
+      
         <div class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
             <div class="card-header text-white fw-semibold d-flex align-items-center"style="background: linear-gradient(90deg, #556b2f, #9dc183);">
@@ -124,8 +123,6 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-
-    <!-- CRUD KENDARAAN -->
     <div class="card shadow-sm mb-5">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>Kelola Data Kendaraan</span>
@@ -169,7 +166,6 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- Riwayat Peminjaman -->
     <div class="card shadow-sm mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
             <i class="bi bi-clock-history me-2"></i> 
@@ -218,12 +214,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
 </div>
 
-<!-- ChartJS -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// === Bar Chart ===
-
-// linechart bulanan
 const ctxLine = document.getElementById('lineChartKendaraan').getContext('2d');
 new Chart(ctxLine, {
     type: 'line',
@@ -241,7 +234,7 @@ new Chart(ctxLine, {
     options: { scales: { y: { beginAtZero: true } } }
 });
 
-// line chart
+
 const ctxLineMinggu = document.getElementById('lineChartKendaraanMinggu').getContext('2d');
 new Chart(ctxLineMinggu, {
     type: 'line',
@@ -267,7 +260,7 @@ new Chart(ctxLineMinggu, {
 </script>
 
 <style>
-/* Ukuran chart */
+
 #lineChartKendaraanMinggu {
     max-width: 600px;
     height: 250px;

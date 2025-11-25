@@ -2,7 +2,7 @@
 session_start();
 require_once("../koneksi.php");
 
-// authentication
+
 if (!isset($_SESSION['username'])) {
     header('Location: ../login.php');
     exit();
@@ -14,7 +14,7 @@ include("../includes/navbar.php");
 $action = $_GET['action'] ?? '';
 $id = $_GET['id'] ?? null;
 
-// === TAMBAH DATA ===
+
 if (isset($_POST['tambah'])) {
     $nama = $_POST['nama_ruangan'];
     $lokasi = $_POST['lokasi'];
@@ -40,7 +40,7 @@ if (isset($_POST['tambah'])) {
     exit;
 }
 
-// === EDIT DATA ===
+
 if (isset($_POST['edit'])) {
     $id = $_POST['id'];
     $nama = $_POST['nama_ruangan'];
@@ -67,7 +67,7 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-// === HAPUS DATA ===
+
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     $stmt = $con->prepare("DELETE FROM ruangan WHERE id=?");

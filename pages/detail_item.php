@@ -2,28 +2,28 @@
 session_start();
 require_once("../koneksi.php");
 
-// Cek login
+
 if (!isset($_SESSION['username'])) {
     header('Location: ../login.php');
     exit();
 }
 
-// Cek parameter ID
+
 if (!isset($_GET['id'])) {
     echo "<h4>Data tidak ditemukan. ID tidak diberikan.</h4>";
     exit();
 }
 
 $id = (int)$_GET['id'];
-$jenis = $_GET['jenis'] ?? ''; // bisa kosong
+$jenis = $_GET['jenis'] ?? ''; 
 
-// Coba ambil data sesuai jenis
+
 if ($jenis === 'ruangan') {
     $stmt = $con->prepare("SELECT *, 'ruangan' AS jenis FROM ruangan WHERE id = ?");
 } elseif ($jenis === 'kendaraan') {
     $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
 } else {
-    // Jika jenis tidak ada, coba deteksi otomatis
+    
     $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
 }
 $stmt->bind_param("i", $id);
@@ -36,22 +36,22 @@ if ($res->num_rows === 0) {
 }
 
 $item = $res->fetch_assoc();
-$jenis = $item['jenis']; // hasil deteksi otomatis
+$jenis = $item['jenis']; 
 
 $pageTitle = "Detail Item";
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-// Path gambar
-$file = $item['foto'] ?? '';
-$fotoPath = "../" . $file; // langsung dari database
 
-// Pastikan file ada
+$file = $item['foto'] ?? '';
+$fotoPath = "../" . $file; 
+
+
 if (empty($file) || !file_exists($fotoPath)) {
-    $fotoPath = "../uploads/no-image.png"; // default image
+    $fotoPath = "../uploads/no-image.png"; 
 }
 
-// Link kembali
+
 $backLink = ($jenis === 'ruangan') ? 'ruangan.php' : 'kendaraan.php';
 ?>
 
@@ -130,10 +130,10 @@ $backLink = ($jenis === 'ruangan') ? 'ruangan.php' : 'kendaraan.php';
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="detail-card">
-                <!-- Gambar -->
+                
                 <img src="<?= htmlspecialchars($fotoPath) ?>" class="detail-img" alt="Foto <?= htmlspecialchars($jenis) ?>">
 
-                <!-- Konten -->
+               
                 <div class="detail-content">
                     <h3 class="mb-3">
                         <?= htmlspecialchars($jenis === 'ruangan' ? $item['nama_ruangan'] : $item['nama_kendaraan']) ?>
@@ -162,7 +162,7 @@ $backLink = ($jenis === 'ruangan') ? 'ruangan.php' : 'kendaraan.php';
                             <button class="btn btn-secondary px-4" disabled>Sudah Dipinjam</button>
                         <?php endif; ?>
 
-                        <!-- Tombol Kembali -->
+                        
                         <a href="<?= htmlspecialchars($backLink) ?>" class="btn btn-back px-4">Kembali</a>
                     </div>
                 </div>

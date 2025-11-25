@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Jika sudah login, arahkan ke dashboard
+
 if (isset($_SESSION['username'])) {
     header('Location: ../../index.php');
     exit();
@@ -28,7 +28,7 @@ unset($_SESSION['error_message']);
 
         }
 
-        /* Navbar */
+        
         .navbar a{
             /* background-color: #8c7a2b; */
             color: #ffffffff !important;
@@ -44,7 +44,7 @@ unset($_SESSION['error_message']);
             margin-right: 10px;
         }
 
-        /* Login Card */
+        
         .login-container {
             display: flex;
             justify-content: center;
@@ -83,7 +83,7 @@ unset($_SESSION['error_message']);
             background-color: #6e6220;
         }
 
-        /* Footer */
+        
         footer {
             /* background-color: #8c7a2b; */
             color: white;
@@ -98,7 +98,7 @@ unset($_SESSION['error_message']);
 </head>
 <body>
 
-<!-- Navbar  -->
+
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid d-flex justify-content-end align-items-center">
         <a class="navbar-brand d-flex flex-column align-items-center text-end" href="#">
@@ -108,7 +108,7 @@ unset($_SESSION['error_message']);
     </div>
 </nav>
 
-<!-- Login Form -->
+
 <div class="login-container">
     <div class="login-card">
         <h3>Login Sistem Peminjaman</h3>
@@ -135,7 +135,7 @@ unset($_SESSION['error_message']);
     </div>
 </div>
 
-<!-- Footer sama seperti dashboard -->
+
 <footer>
     © 2025 Sistem Peminjaman Ruangan & Kendaraan
 </footer>

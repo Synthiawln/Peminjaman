@@ -8,7 +8,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 $id_item = $_GET['id'];
-$jenis = $_GET['jenis']; // ruangan atau kendaraan
+$jenis = $_GET['jenis']; 
 $minDate = date('Y-m-d'); 
 ?>
 

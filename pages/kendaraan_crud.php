@@ -2,7 +2,7 @@
 session_start();
 include_once("../koneksi.php");
 
-// Cek hak akses
+
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['super_admin', 'admin_kendaraan'])) {
     header("Location: ../login.php");
     exit();
@@ -14,7 +14,7 @@ include("../includes/navbar.php");
 $action = $_GET['action'] ?? '';
 $id = $_GET['id'] ?? null;
 
-// ================= TAMBAH DATA =================
+
 if (isset($_POST['tambah'])) {
     $nama = $_POST['nama_kendaraan'];
     $plat = $_POST['no_polisi'];
@@ -39,7 +39,7 @@ if (isset($_POST['tambah'])) {
     exit;
 }
 
-// ================= EDIT DATA =================
+
 if (isset($_POST['edit'])) {
     $id = $_POST['id'];
     $nama = $_POST['nama_kendaraan'];
@@ -65,7 +65,7 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-// ================= HAPUS DATA =================
+
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     $con->query("DELETE FROM kendaraan WHERE id='$id'");

@@ -18,7 +18,7 @@ include_once(__DIR__ . "/../../koneksi.php");
             background-size: cover;
         }
 
-        /* Navbar */
+        
 
         .navbar-brand {
             font-weight: 600;
@@ -30,7 +30,7 @@ include_once(__DIR__ . "/../../koneksi.php");
             margin-right: 10px;
         }
 
-        /* Register Card */
+        
         .register-container {
             display: flex;
             justify-content: center;
@@ -69,7 +69,7 @@ include_once(__DIR__ . "/../../koneksi.php");
             background-color: #6e6220;
         }
 
-        /* Footer */
+        
         footer {
             /* background-color: #8c7a2b; */
             color: white;
@@ -84,7 +84,7 @@ include_once(__DIR__ . "/../../koneksi.php");
 </head>
 <body>
 
-<!-- Navbar mirip login -->
+
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid d-flex justify-content-end align-items-center">
     <a class="navbar-brand d-flex flex-column align-items-center text-end" href="#">
@@ -94,7 +94,7 @@ include_once(__DIR__ . "/../../koneksi.php");
   </div>
 </nav>
 
-<!-- Register Form -->
+
 <div class="register-container">
     <div class="register-card">
         <h3>Daftar Akun Baru</h3>
@@ -140,7 +140,7 @@ include_once(__DIR__ . "/../../koneksi.php");
     </div>
 </div>
 
-<!-- Footer -->
+
 <footer>
     © 2025 Sistem Peminjaman Ruangan & Kendaraan
 </footer>

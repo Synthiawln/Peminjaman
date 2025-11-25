@@ -10,11 +10,9 @@ if (!isset($_SESSION['username'])) {
 
 $pageTitle = "Katalog Kendaraan";
 
-// Pastikan include path-nya benar (karena file ini di dalam folder /pages)
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-// Ambil list kendaraan dari database
 $stmt = $con->prepare("SELECT * FROM kendaraan ORDER BY nama_kendaraan ASC");
 $stmt->execute();
 $res = $stmt->get_result();
@@ -74,11 +72,11 @@ $res = $stmt->get_result();
   background-color: #74652fff !important;
 }
 
-/* 🔹 Badge tampilan lembut */
+
 .badge-tersedia {
   background-color: #28a745 !important;
   color: #fff !important;
-  border-radius: 50px !important; /* bikin bentuk lonjong */
+  border-radius: 50px !important; 
   padding: 6px 14px !important;
   font-size: 0.9rem;
   font-weight: 500;

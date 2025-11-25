@@ -1,25 +1,24 @@
 <?php
 require_once '../koneksi.php';
 
-// Ambil parameter GET
-$file = $_GET['file'] ?? null;      // public URL, ex: /PinjamRuanganKendaraan/pdf-kembali/2025/TI/BA-123-RET.pdf
+$file = $_GET['file'] ?? null;     
 $nomor_ba = $_GET['nomor_ba'] ?? null;
 
-// Validasi parameter
+
 if (!$file || !$nomor_ba) {
     die("<h3 style='color:red;text-align:center;margin-top:50px;'>⚠️ Data tidak lengkap.<br>Pastikan halaman ini dipanggil setelah proses generate Berita Acara.</h3>");
 }
 
-// Pastikan $file dimulai dengan / untuk mencegah path traversal
+
 if (strpos($file, "\0") !== false) {
     die("Invalid file path.");
 }
 if ($file[0] !== '/') {
-    // tambahkan leading slash jika perlu
+    
     $file = '/' . $file;
 }
 
-// Cek apakah file benar-benar ada pada filesystem (debug / safety)
+
 $full_fs_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . $file;
 $file_exists_fs = file_exists($full_fs_path);
 ?>
@@ -45,7 +44,7 @@ $file_exists_fs = file_exists($full_fs_path);
         <a href="../index.php" class="btn btn-outline-secondary ms-2">Kembali ke Dashboard</a>
       </div>
 
-      <!-- tampilkan inline preview (iframe) -->
+      
       <iframe src="<?= htmlspecialchars($file) ?>" class="pdf-frame" title="Preview PDF"></iframe>
 
     <?php else: ?>

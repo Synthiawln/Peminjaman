@@ -10,7 +10,7 @@ $minDate = date('Y-m-d');
 
 $username = $_SESSION['username'];
 
-// Ambil ID user yang login
+
 $stmt_user = $con->prepare("SELECT id FROM user WHERE username = ?");
 $stmt_user->bind_param("s", $username);
 $stmt_user->execute();
@@ -18,11 +18,11 @@ $res_user = $stmt_user->get_result();
 $user = $res_user->fetch_assoc();
 $id_user = $user['id'];
 
-// Cek apakah ada parameter ID (jika user klik tombol 'Kembalikan' langsung)
+
 $id_peminjaman = isset($_GET['id']) ? intval($_GET['id']) : null;
 
 if ($id_peminjaman) {
-    // Ambil data peminjaman spesifik
+    
     $stmt = $con->prepare("
         SELECT * FROM peminjaman 
         WHERE id = ? AND id_user = ? AND status = 'dipinjam'
@@ -35,7 +35,7 @@ if ($id_peminjaman) {
         die("<script>alert('Data peminjaman tidak ditemukan atau sudah dikembalikan.'); window.location='peminjaman_saya.php';</script>");
     }
 } else {
-    // Jika tidak ada ID → tampilkan semua
+    
     $peminjaman_list = $con->query("
         SELECT * FROM peminjaman 
         WHERE id_user = $id_user AND status = 'dipinjam'
@@ -56,7 +56,7 @@ if ($id_peminjaman) {
     <h3 class="text-center mb-4">Form Pengembalian Barang</h3>
 
     <?php if ($id_peminjaman): ?>
-      <!-- Jika user langsung klik dari tombol "Kembalikan" -->
+      
       <form action="kembali_proses.php" method="POST">
         <input type="hidden" name="id_peminjaman" value="<?= $peminjaman['id'] ?>">
 
@@ -74,7 +74,7 @@ if ($id_peminjaman) {
       </form>
 
     <?php else: ?>
-      <!-- Versi fallback jika user belum klik dari tombol -->
+      
       <form action="kembali_proses.php" method="POST">
         <div class="mb-3">
           <label class="form-label">Pilih Barang yang Dikembalikan</label>

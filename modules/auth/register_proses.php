@@ -8,13 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nip = trim($_POST['nip']);
     $confirm_password = trim($_POST['confirm_password']);
 
-    // Cek konfirmasi password
+    
     if ($password !== $confirm_password) {
         header('Location: register.php?error=passwords_not_match');
         exit();
     }
 
-    // Cek username sudah ada atau belum
+    
     $check_username = $con->prepare("SELECT * FROM user WHERE username = ?");
     $check_username->bind_param("s", $username);
     $check_username->execute();
@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Hash password
+    
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert data user
+    
     $stmt = $con->prepare("
         INSERT INTO user (nama, username, password, role, nip)
         VALUES (?, ?, ?, 'user', ?)

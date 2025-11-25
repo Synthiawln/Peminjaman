@@ -41,18 +41,16 @@ if ($role === 'super_admin') {
 
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(90deg, #8d7b35, #5e4b1f);">
   <div class="container-fluid px-4">
-    <!-- Logo -->
+   
     <a class="navbar-brand d-flex align-items-center fw-bold text-light" href="<?= $link ?>">
       <img src="<?= $pathPrefix ?>gambar/logo_BPK.png" alt="Logo" width="35" class="me-2 rounded">
       <?= htmlspecialchars($systemTitle) ?>
     </a>
 
-    <!-- Toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Menu -->
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <?php if (in_array($role, ['super_admin', 'admin_ruangan', 'admin_kendaraan'])): ?>
@@ -80,7 +78,7 @@ if ($role === 'super_admin') {
         <?php endif; ?>
       </ul>
 
-            <!-- User Dropdown -->
+        
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center text-light fw-semibold"
@@ -142,7 +140,6 @@ if ($role === 'super_admin') {
 </nav>
 
 
-<!-- Smooth Scroll -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {

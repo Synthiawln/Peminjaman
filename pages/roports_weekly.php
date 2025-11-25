@@ -2,7 +2,7 @@
 session_start();
 include_once("../koneksi.php");
 
-// Hak akses
+
 $adminRoles = ['super_admin', 'admin_ruangan', 'admin_kendaraan'];
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../modules/auth/login.php');
@@ -13,7 +13,7 @@ $pageTitle = "Laporan Mingguan";
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-// Filter berdasarkan role
+
 $where = "";
 if ($_SESSION['role'] == 'admin_ruangan') {
     $where = "WHERE jenis = 'ruangan'";
@@ -21,7 +21,7 @@ if ($_SESSION['role'] == 'admin_ruangan') {
     $where = "WHERE jenis = 'kendaraan'";
 }
 
-// Query laporan mingguan
+
 $q = $con->query("
     SELECT 
         YEAR(tanggal_pinjam) AS tahun,
@@ -35,7 +35,7 @@ $q = $con->query("
     ORDER BY tahun DESC, minggu_ke DESC
 ");
 
-// Query tambahan untuk super_admin: perbandingan jenis per minggu
+
 $qJenis = null;
 if ($_SESSION['role'] == 'super_admin') {
     $qJenis = $con->query("
@@ -128,7 +128,7 @@ if ($_SESSION['role'] == 'super_admin') {
     <?php endif; ?>
 </div>
 
-<!-- Script Export ke CSV -->
+
 <script>
 document.getElementById("downloadCsv").addEventListener("click", function () {
     const tables = document.querySelectorAll("table");
