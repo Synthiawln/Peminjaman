@@ -124,6 +124,44 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
 
     <div class="card shadow-sm mb-5">
+        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+            <i class="bi bi-hourglass-split me-2"></i>
+            <span>Permintaan Peminjaman Kendaraan (Menunggu Persetujuan)</span>
+        </div>
+        <div class="card-body table-responsive">
+            <?php
+            $pending = $con->query("SELECT p.*, u.nama AS peminjam, k.nama_kendaraan FROM peminjaman p JOIN user u ON p.id_user = u.id JOIN kendaraan k ON p.id_item = k.id WHERE p.jenis='kendaraan' AND p.status='pending' ORDER BY p.created_at ASC");
+            ?>
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kode Temp</th>
+                        <th>Nama Peminjam</th>
+                        <th>Kendaraan</th>
+                        <th>Tgl Pinjam</th>
+                        <th>Tgl Kembali</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($p = $pending->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($p['kode_peminjaman'] ?: '-') ?></td>
+                            <td><?= htmlspecialchars($p['peminjam']) ?></td>
+                            <td><?= htmlspecialchars($p['nama_kendaraan']) ?></td>
+                            <td><?= htmlspecialchars($p['tanggal_pinjam']) ?></td>
+                            <td><?= htmlspecialchars($p['tanggal_kembali']) ?></td>
+                            <td class="text-center">
+                                <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=approve" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan ini?')">Setujui</a>
+                                <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=reject" class="btn btn-sm btn-danger" onclick="return confirm('Tolak permintaan ini?')">Tolak</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>Kelola Data Kendaraan</span>
             <a href="../../pages/kendaraan_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Kendaraan</a>

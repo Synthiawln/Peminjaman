@@ -49,10 +49,27 @@ include("includes/navbar.php");
         <div class="card-body">
             <?php
             $id_user = $_SESSION['id'];
-            $query = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? ORDER BY created_at DESC");
-            $query->bind_param("i", $id_user);
-            $query->execute();
-            $result = $query->get_result();
+
+            // check for pending requests first
+            $pendQ = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? AND status = 'pending' ORDER BY created_at DESC");
+            $pendQ->bind_param("i", $id_user);
+            $pendQ->execute();
+            $pendRes = $pendQ->get_result();
+
+            if ($pendRes->num_rows > 0) {
+                // show notice and prepare to render only pending requests
+                $result = $pendRes;
+                $isPendingView = true;
+                ?>
+                <div class="alert alert-info">Anda memiliki <strong><?= $pendRes->num_rows ?></strong> permintaan yang sedang <em>diproses</em>. Riwayat peminjaman sementara tidak ditampilkan sampai permintaan selesai.</div>
+                <?php
+            } else {
+                $query = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? ORDER BY created_at DESC");
+                $query->bind_param("i", $id_user);
+                $query->execute();
+                $result = $query->get_result();
+                $isPendingView = false;
+            }
             ?>
 
             <?php if ($result->num_rows > 0): ?>
@@ -75,15 +92,23 @@ include("includes/navbar.php");
                                 <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
                                 <td><?= htmlspecialchars($row['tanggal_kembali']); ?></td>
                                 <td>
-                                    <?php if ($row['status'] === 'dipinjam'): ?>
+                                    <?php if ($row['status'] === 'pending'): ?>
+                                        <span class="badge bg-secondary">Proses</span>
+                                    <?php elseif ($row['status'] === 'dipinjam'): ?>
                                         <span class="badge" style="background-color: #ff2323cf; color: #000;">Dipinjam</span>
+                                    <?php elseif ($row['status'] === 'rejected'): ?>
+                                        <span class="badge bg-danger">Ditolak</span>
                                     <?php else: ?>
                                         <span class="badge bg-success">Dikembalikan</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if ($row['status'] === 'dipinjam'): ?>
+                                    <?php if ($row['status'] === 'pending'): ?>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan</button>
+                                    <?php elseif ($row['status'] === 'dipinjam'): ?>
                                         <a href="pages/kembali_form.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger">Kembalikan</a>
+                                    <?php elseif ($row['status'] === 'rejected'): ?>
+                                        <span class="text-muted">-</span>
                                     <?php else: ?>
                                         <a href="pages/lihat_BA.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-success" target="_blank">Cetak BA</a>
                                     <?php endif; ?>

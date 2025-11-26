@@ -24,7 +24,7 @@ $minDate = date('Y-m-d');
   <div class="card p-4 shadow-lg rounded-3">
     <h3 class="text-center mb-4">Form Peminjaman <?= ucfirst($jenis) ?></h3>
 
-    <form action="pinjam_proses.php" method="POST"  target="_blank">
+    <form action="pinjam_proses.php" method="POST">
       <input type="hidden" name="id_item" value="<?= htmlspecialchars($id_item) ?>">
       <input type="hidden" name="jenis" value="<?= htmlspecialchars($jenis) ?>">
 
@@ -38,12 +38,20 @@ $minDate = date('Y-m-d');
         <input type="date" name="tgl_kembali" class="form-control" required min="<?= $minDate ?>">
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Penanggung Jawab (LO)</label>
-        <input type="text" name="penanggung_jawab" class="form-control" placeholder="Masukkan nama LO" required>
-      </div>
+      <?php if ($jenis === 'kendaraan' || $jenis === 'ruangan'): ?>
+        <div class="mb-3">
+          <label class="form-label">Penanggung Jawab (LO)</label>
+          <input type="text" class="form-control" value="(otomatis: admin <?= $jenis === 'kendaraan' ? 'kendaraan' : 'ruangan' ?>)" disabled>
+          <div class="form-text">Nama LO akan diisi otomatis oleh sistem (admin <?= $jenis === 'kendaraan' ? 'kendaraan' : 'ruangan' ?>).</div>
+        </div>
+      <?php else: ?>
+        <div class="mb-3">
+          <label class="form-label">Penanggung Jawab (LO)</label>
+          <input type="text" name="penanggung_jawab" class="form-control" placeholder="Masukkan nama LO" required>
+        </div>
+      <?php endif; ?>
 
-      <button type="submit" class="btn btn-dark w-100">Simpan & Generate Berita Acara</button>
+      <button type="submit" class="btn btn-dark w-100">Kirim Permintaan Peminjaman</button>
     </form>
   </div>
 </div>

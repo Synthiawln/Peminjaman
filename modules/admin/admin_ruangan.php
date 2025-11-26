@@ -131,8 +131,47 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
     </div>
 
+    <!-- Permintaan pending -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+            <i class="bi bi-hourglass-split me-2"></i>
+            <span>Permintaan Peminjaman Ruangan (Menunggu Persetujuan)</span>
+        </div>
+        <div class="card-body table-responsive">
+            <?php
+            $pending = $con->query("SELECT p.*, u.nama AS peminjam, r.nama_ruangan FROM peminjaman p JOIN user u ON p.id_user = u.id JOIN ruangan r ON p.id_item = r.id WHERE p.jenis='ruangan' AND p.status='pending' ORDER BY p.created_at ASC");
+            ?>
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kode Temp</th>
+                        <th>Nama Peminjam</th>
+                        <th>Ruangan</th>
+                        <th>Tgl Pinjam</th>
+                        <th>Tgl Kembali</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($p = $pending->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($p['kode_peminjaman'] ?: '-') ?></td>
+                            <td><?= htmlspecialchars($p['peminjam']) ?></td>
+                            <td><?= htmlspecialchars($p['nama_ruangan']) ?></td>
+                            <td><?= htmlspecialchars($p['tanggal_pinjam']) ?></td>
+                            <td><?= htmlspecialchars($p['tanggal_kembali']) ?></td>
+                            <td class="text-center">
+                                <a href="approve_ruangan.php?id=<?= $p['id'] ?>&action=approve" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan ini?')">Setujui</a>
+                                <a href="approve_ruangan.php?id=<?= $p['id'] ?>&action=reject" class="btn btn-sm btn-danger" onclick="return confirm('Tolak permintaan ini?')">Tolak</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-   
+
     <div class="card shadow-sm mb-4">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf">
             <span>Kelola Data Ruangan</span>
@@ -224,6 +263,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             </table>
         </div>
     </div>
+    
+    
 </div>
 
 

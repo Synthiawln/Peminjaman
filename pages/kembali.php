@@ -24,10 +24,49 @@ include("../includes/navbar.php");
         <div class="card-body">
             <?php
             $id_user = $_SESSION['id'];
-            $query = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? ORDER BY created_at DESC");
-            $query->bind_param("i", $id_user);
-            $query->execute();
-            $result = $query->get_result();
+
+            // first check if user has any pending requests
+            $pendQ = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? AND status = 'pending' ORDER BY created_at DESC");
+            $pendQ->bind_param("i", $id_user);
+            $pendQ->execute();
+            $pendRes = $pendQ->get_result();
+
+            if ($pendRes->num_rows > 0) {
+                // show only pending requests and a notice; do not display full history
+                ?>
+                <div class="alert alert-info">Anda memiliki <strong><?= $pendRes->num_rows ?></strong> permintaan yang sedang <em>diproses</em>. Riwayat peminjaman sementara tidak ditampilkan sampai semua permintaan diproses.</div>
+                <table class="table table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kode</th>
+                            <th>Jenis</th>
+                            <th>Tanggal Pinjam</th>
+                            <th>Tanggal Kembali</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $pendRes->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
+                                <td><?= ucfirst(htmlspecialchars($row['jenis'])); ?></td>
+                                <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
+                                <td><?= htmlspecialchars($row['tanggal_kembali']); ?></td>
+                                <td><span class="badge bg-secondary">Proses</span></td>
+                                <td><button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan</button></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+                <?php
+            } else {
+                // no pending requests: show full history
+                $query = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? ORDER BY created_at DESC");
+                $query->bind_param("i", $id_user);
+                $query->execute();
+                $result = $query->get_result();
+            }
             ?>
 
             <?php if ($result->num_rows > 0): ?>

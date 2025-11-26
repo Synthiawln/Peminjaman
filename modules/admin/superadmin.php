@@ -129,18 +129,14 @@ include("../../includes/navbar.php");
     <div class="card shadow-sm mb-4">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>📋 Data Peminjaman Terbaru</span>
+        <small class="text-light">Scroll untuk melihat semua riwayat</small>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body">
             <?php
-            $result = $con->query("
-                SELECT p.*, u.nama 
-                FROM peminjaman p
-                JOIN user u ON p.id_user = u.id
-                ORDER BY p.created_at DESC
-                LIMIT 15
-            ");
+            $riwayat = $con->query("SELECT p.*, u.nama FROM peminjaman p JOIN user u ON p.id_user = u.id ORDER BY p.created_at DESC");
             ?>
-            <table class="table table-striped table-hover align-middle">
+            <div style="max-height:60vh; overflow:auto;">
+            <table class="table table-striped table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
                         <th>Kode</th>
@@ -152,38 +148,29 @@ include("../../includes/navbar.php");
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php while ($r = $riwayat->fetch_assoc()): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
-                            <td><?= htmlspecialchars($row['nama']); ?></td>
-                            <td><?= ucfirst($row['jenis']); ?></td>
-                            <!-- <td><?= htmlspecialchars($row['nama_barang'] ?? '-'); ?></td> -->
-                            <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
-                            <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($r['kode_peminjaman']); ?></td>
+                            <td><?= htmlspecialchars($r['nama']); ?></td>
+                            <td><?= ucfirst($r['jenis']); ?></td>
+                            <td><?= htmlspecialchars($r['tanggal_pinjam']); ?></td>
+                            <td><?= htmlspecialchars($r['tanggal_kembali'] ?? '-'); ?></td>
                             <td>
-                                <?php if ($row['status'] === 'dipinjam'): ?>
-                                      <span class="status-label tersedia">Belum Dikembalikan</span>
-                            <?php else: ?>
-                                <span class="status-label dipinjam">Sudah Dikembalikan</span>
-                            <?php endif; ?>
+                                <?php if ($r['status'] === 'dipinjam'): ?>
+                                    <span class="status-label tersedia">Belum Dikembalikan</span>
+                                <?php else: ?>
+                                    <span class="status-label dipinjam">Sudah Dikembalikan</span>
+                                <?php endif; ?>
                             </td>
-                            <!-- <td class="text-center">
-                                <a href="pages/peminjaman_crud.php?edit=<?= $row['id']; ?>" class="btn btn-sm btn-warning me-1">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <a href="pages/peminjaman_crud.php?id=<?= $row['id']; ?>" 
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Yakin ingin menghapus data ini?')">
-                                   <i class="bi bi-trash"></i> Hapus
-                                </a>
-                            </td> -->
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>
+    
 <style>
     .status-label.tersedia {
     background-color: #dc3545;

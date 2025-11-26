@@ -20,6 +20,31 @@ $systemTitle = 'Sistem Peminjaman';
 $label = 'Home';
 $link = $pathPrefix . 'index.php';
 
+// Inisialisasi count notifikasi
+$notif_count = 0;
+if (!empty($username)) {
+  // pastikan koneksi tersedia
+  @include_once($pathPrefix . 'koneksi.php');
+  if (isset($con)) {
+    $stmtU = $con->prepare("SELECT id FROM user WHERE username = ?");
+    if ($stmtU) {
+      $stmtU->bind_param('s', $username);
+      $stmtU->execute();
+      $resU = $stmtU->get_result()->fetch_assoc();
+      $uid = $resU['id'] ?? null;
+      if ($uid) {
+        $stmtN = $con->prepare("SELECT COUNT(*) AS cnt FROM notifications WHERE id_user = ? AND is_read = 0");
+        if ($stmtN) {
+          $stmtN->bind_param('i', $uid);
+          $stmtN->execute();
+          $resN = $stmtN->get_result()->fetch_assoc();
+          $notif_count = (int)($resN['cnt'] ?? 0);
+        }
+      }
+    }
+  }
+}
+
 if ($role === 'super_admin') {
     $systemTitle = 'Super Admin';
     $label = 'Dashboard Super Admin';
@@ -80,6 +105,15 @@ if ($role === 'super_admin') {
 
         
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item me-2">
+          <a class="nav-link position-relative text-light fw-semibold" href="<?= $pathPrefix ?>pages/notifications.php" title="Notifikasi">
+            <i class="bi bi-bell fs-5"></i>
+            <?php if ($notif_count > 0): ?>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $notif_count ?></span>
+            <?php endif; ?>
+          </a>
+        </li>
+
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center text-light fw-semibold"
             href="#"
