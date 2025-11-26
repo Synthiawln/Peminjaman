@@ -2,7 +2,6 @@
 session_start();
 include_once("../koneksi.php");
 
-
 $adminRoles = ['super_admin', 'admin_ruangan', 'admin_kendaraan'];
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $adminRoles)) {
     header('Location: ../modules/auth/login.php');
@@ -13,14 +12,12 @@ $pageTitle = "Laporan Bulanan";
 include("../includes/header.php");
 include("../includes/navbar.php");
 
-
 $where = "";
 if ($_SESSION['role'] == 'admin_ruangan') {
     $where = "WHERE jenis = 'ruangan'";
 } elseif ($_SESSION['role'] == 'admin_kendaraan') {
     $where = "WHERE jenis = 'kendaraan'";
 }
-
 
 $q = $con->query("
     SELECT 
@@ -33,7 +30,6 @@ $q = $con->query("
     ORDER BY tahun DESC, MONTH(tanggal_pinjam) DESC
 ");
 
-
 $qJenis = null;
 if ($_SESSION['role'] == 'super_admin') {
     $qJenis = $con->query("
@@ -45,6 +41,22 @@ if ($_SESSION['role'] == 'super_admin') {
         FROM peminjaman
         GROUP BY tahun, MONTH(tanggal_pinjam), jenis
         ORDER BY tahun DESC, MONTH(tanggal_pinjam) DESC
+    ");
+}
+
+$qKendaraan = null;
+if ($_SESSION['role'] == 'admin_kendaraan') {
+    $qKendaraan = $con->query("
+        SELECT 
+            YEAR(p.tanggal_pinjam) AS tahun,
+            MONTHNAME(p.tanggal_pinjam) AS bulan,
+            k.nama_kendaraan,
+            COUNT(*) AS total
+        FROM peminjaman p
+        JOIN kendaraan k ON p.id_item = k.id
+        WHERE p.jenis = 'kendaraan'
+        GROUP BY tahun, MONTH(p.tanggal_pinjam), k.nama_kendaraan
+        ORDER BY tahun DESC, MONTH(p.tanggal_pinjam) DESC, k.nama_kendaraan ASC
     ");
 }
 ?>
@@ -85,7 +97,7 @@ if ($_SESSION['role'] == 'super_admin') {
     </div>
 
     <?php if ($_SESSION['role'] == 'super_admin' && $qJenis): ?>
-    <div class="card shadow-sm rounded-4">
+    <div class="card shadow-sm mb-4 rounded-4">
         <div class="card-body">
             <h5 class="card-title">📈 Laporan Perbandingan Jenis Peminjaman</h5>
             <p class="text-muted">Menampilkan jumlah peminjaman tiap bulan berdasarkan jenis (ruangan vs kendaraan).</p>
@@ -112,6 +124,35 @@ if ($_SESSION['role'] == 'super_admin') {
         </div>
     </div>
     <?php endif; ?>
+
+    <?php if ($_SESSION['role'] == 'admin_kendaraan' && $qKendaraan): ?>
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body">
+            <h5 class="card-title">🚗 Laporan Peminjaman Kendaraan per Bulan</h5>
+            <p class="text-muted">Menampilkan nama kendaraan dan jumlah peminjaman tiap bulan.</p>
+            <table id="laporanKendaraanTable" class="table table-striped table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tahun</th>
+                        <th>Bulan</th>
+                        <th>Nama Kendaraan</th>
+                        <th>Jumlah Peminjaman</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $qKendaraan->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['tahun']) ?></td>
+                            <td><?= htmlspecialchars($row['bulan']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_kendaraan']) ?></td>
+                            <td><?= htmlspecialchars($row['total']) ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Script Export ke CSV -->
@@ -122,7 +163,13 @@ document.getElementById("downloadCsv").addEventListener("click", function () {
 
     tables.forEach((table, index) => {
         csv.push("");
-        csv.push(index === 0 ? "Laporan Bulanan" : "Laporan Berdasarkan Jenis");
+        if (index === 0) {
+            csv.push("Laporan Bulanan");
+        } else if (index === 1 && document.getElementById("laporanJenisTable")) {
+            csv.push("Laporan Berdasarkan Jenis");
+        } else if (index === 2 && document.getElementById("laporanKendaraanTable")) {
+            csv.push("Laporan Peminjaman Kendaraan per Bulan");
+        }
         for (let i = 0; i < table.rows.length; i++) {
             let row = [], cols = table.rows[i].querySelectorAll("td, th");
             for (let j = 0; j < cols.length; j++) {
