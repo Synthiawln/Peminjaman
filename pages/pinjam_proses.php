@@ -26,7 +26,6 @@ $jenis            = $_POST['jenis'];
 $tgl_pinjam       = $_POST['tgl_pinjam'];
 $tgl_kembali      = $_POST['tgl_kembali'];
 
-// Jika jenis kendaraan, otomatis set LO sebagai admin_kendaraan (nama pertama yang ditemukan)
 $penanggung_jawab = '';
 $admin_to_notify = null;
 if ($jenis === 'kendaraan') {
@@ -35,23 +34,23 @@ if ($jenis === 'kendaraan') {
         $penanggung_jawab = $admin['nama'];
         $admin_to_notify = $admin['id'];
     } else {
-        // fallback jika tidak ada admin_kendaraan
+        
         $penanggung_jawab = 'ADMIN KENDARAAN';
         $admin_to_notify = null;
     }
 } elseif ($jenis === 'ruangan') {
-    // untuk ruangan, LO otomatis diisi dengan admin_ruangan (nama pertama yang ditemukan)
+   
     $adminR = $con->query("SELECT id, nama FROM user WHERE role = 'admin_ruangan' ORDER BY id ASC LIMIT 1")->fetch_assoc();
     if ($adminR) {
         $penanggung_jawab = $adminR['nama'];
         $admin_to_notify = $adminR['id'];
     } else {
-        // fallback jika tidak ada admin_ruangan
+        
         $penanggung_jawab = 'ADMIN RUANGAN';
         $admin_to_notify = null;
     }
 } else {
-    // default: gunakan input LO
+ 
     $penanggung_jawab = $_POST['penanggung_jawab'] ?? '-';
 }
 
@@ -68,7 +67,6 @@ function tanggalIndo($tgl, $bulanIndo) {
     return "$d {$bulanIndo[$m]} $y";
 }
 
-// Helper: generate a BA number that's unique in `peminjaman.kode_peminjaman`
 function generateUniqueBA($con) {
     do {
         $candidate = "BA." . date("Y") . "/TI/" . str_pad(rand(1,200), 3, "0", STR_PAD_LEFT);
@@ -82,16 +80,14 @@ function generateUniqueBA($con) {
 }
 
 
-// buat nomor BA nanti saat admin menyetujui; jika jenis kendaraan, buat status 'pending'
 $nomor_ba = null;
 
 $status_to_insert = in_array($jenis, ['kendaraan', 'ruangan']) ? 'pending' : 'dipinjam';
 
-// pastikan kolom status mendukung 'pending' (jika enum lama, coba alter table sekali)
 try {
     $con->query("ALTER TABLE peminjaman CHANGE COLUMN status status ENUM('pending','approved','rejected','dipinjam','dikembalikan') DEFAULT 'pending'");
 } catch (Exception $e) {
-    // ignore jika gagal (mungkin sudah diubah)
+
 }
 
 $stmt_in = $con->prepare(
@@ -113,14 +109,11 @@ $stmt_in->bind_param("sisissss",
 
 $stmt_in->execute();
 
-// jika jenis selain kendaraan/ruangan, langsung ubah status item jadi dipinjam
 if (!in_array($jenis, ['kendaraan','ruangan'])) {
     $con->query("UPDATE $jenis SET status='dipinjam' WHERE id=$id_item");
 }
 
-// Jika jenis kendaraan atau ruangan, jangan generate BA sekarang — tampilkan konfirmasi dan kirim notifikasi ke admin
 if (in_array($jenis, ['kendaraan','ruangan'])) {
-        // buat tabel notifikasi jika belum ada
         $con->query("CREATE TABLE IF NOT EXISTS notifications (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 id_user INT,
@@ -129,7 +122,6 @@ if (in_array($jenis, ['kendaraan','ruangan'])) {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        // kirim notifikasi ke admin yang sesuai (admin_kendaraan atau admin_ruangan)
         if (!empty($admin_to_notify)) {
             $msg = ($jenis === 'kendaraan') ? 'Permintaan peminjaman kendaraan baru menunggu persetujuan.' : 'Permintaan peminjaman ruangan baru menunggu persetujuan.';
             $stmt_notif = $con->prepare("INSERT INTO notifications (id_user, message) VALUES (?, ?)");
@@ -137,7 +129,7 @@ if (in_array($jenis, ['kendaraan','ruangan'])) {
             @$stmt_notif->execute();
         }
 
-        // Tampilkan halaman konfirmasi sederhana
+    
         ?>
         <!doctype html>
         <html>
@@ -161,7 +153,6 @@ if (in_array($jenis, ['kendaraan','ruangan'])) {
         exit;
 }
 
-    // Untuk jenis selain kendaraan: buat nomor BA dan simpan ke record peminjaman yang baru dibuat
     if (!in_array($jenis, ['kendaraan','ruangan'])) {
         $nomor_ba = generateUniqueBA($con);
         $last_id = $con->insert_id;
