@@ -47,87 +47,91 @@ include("includes/navbar.php");
             <i class="bi bi-clock-history me-2"></i> Riwayat Peminjaman Anda
         </div>
         <div class="card-body">
-            <?php
-            $id_user = $_SESSION['id'];
 
-            // Always query all borrowing history for the user
-            $query = $con->prepare("SELECT * FROM peminjaman WHERE id_user = ? ORDER BY created_at DESC");
-            $query->bind_param("i", $id_user);
-            $query->execute();
-            $result = $query->get_result();
+        <?php
+        $id_user = $_SESSION['id'];
 
-            // Check for pending requests to show alert
-            $pendQ = $con->prepare("SELECT COUNT(*) as count FROM peminjaman WHERE id_user = ? AND (status = 'pending' OR status = 'pending_return')");
-            $pendQ->bind_param("i", $id_user);
-            $pendQ->execute();
-            $pendRes = $pendQ->get_result();
-            $pendCount = $pendRes->fetch_assoc()['count'];
+        // Ambil semua peminjaman user
+        $q = $con->prepare(
+            "SELECT * FROM peminjaman 
+             WHERE id_user = ? 
+             ORDER BY created_at DESC"
+        );
+        $q->bind_param("i", $id_user);
+        $q->execute();
+        $result = $q->get_result();
 
-            if ($pendCount > 0) {
-                ?>
-                <div class="alert alert-info">Anda memiliki <strong><?= $pendCount ?></strong> permintaan yang sedang <em>diproses</em>.</div>
-                <?php
-            }
-            ?>
+        ?>
 
-            <?php if ($result->num_rows > 0): ?>
-                <table class="table table-striped align-middle">
-                    <thead class="table-dark">
+        <?php if ($result->num_rows > 0): ?>
+            
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kode</th>
+                        <th>Jenis</th>
+                        <th>Tanggal Pinjam</th>
+                        <th>Tanggal Kembali</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <th>Kode</th>
-                            <th>Jenis</th>
-                            <th>Tanggal Pinjam</th>
-                            <th>Tanggal Kembali</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
+                            <td><?= $row['kode_peminjaman']; ?></td>
+                            <td><?= ucfirst($row['jenis']); ?></td>
+                            <td><?= $row['tanggal_pinjam']; ?></td>
+                            <td><?= $row['tanggal_kembali']; ?></td>
+
+                            <td>
+                                <?php
+                                if ($row['status'] === 'pending'){
+                                    echo '<span class="badge bg-secondary">Proses</span>';
+                                } elseif ($row['status'] === '') {
+                                    echo '<span class="badge bg-secondary">Proses Pengembalian</span>';
+                                } elseif ($row['status'] === 'dipinjam') {
+                                    echo '<span class="badge bg-danger">Dipinjam</span>';
+                                } elseif ($row['status'] === 'dikembalikan') {
+                                    echo '<span class="badge bg-success">Dikembalikan</span>';
+                                } elseif ($row['status'] === 'rejected') {
+                                    echo '<span class="badge bg-danger">Ditolak</span>';
+                                } else {
+                                    echo '<span class="badge bg-secondary">Proses</span>';
+                                }
+                                ?>
+                            </td>
+
+                            <td>
+                                <?php if ($row['status'] === 'pending'): ?>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan</button>
+
+                                <?php elseif ($row['status'] === ''): ?>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan Pengembalian</button>
+
+                                <?php elseif ($row['status'] === 'dipinjam'): ?>
+                                    <a href="pages/kembali_form.php?id=<?= $row['id']; ?>" 
+                                       class="btn btn-sm btn-outline-danger">Kembalikan</a>
+
+                                <?php elseif ($row['status'] === 'dikembalikan'): ?>
+                                    <a href="pages/lihat_BA.php?id=<?= $row['id']; ?>" 
+                                       class="btn btn-sm btn-outline-success" target="_blank">Cetak BA</a>
+
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
+
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
-                                <td><?= ucfirst(htmlspecialchars($row['jenis'])); ?></td>
-                                <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
-                                <td><?= htmlspecialchars($row['tanggal_kembali']); ?></td>
-                                <td>
-                                    <?php if ($row['status'] === 'pending'): ?>
-                                        <span class="badge bg-secondary">Proses</span>
-                                    <?php elseif ($row['status'] === ''): ?>
-                                        <span class="badge bg-secondary">Proses Pengembalian</span>
-                                    <?php elseif ($row['status'] === 'dipinjam'): ?>
-                                        <span class="badge" style="background-color: #ff2323cf; color: #000;">Dipinjam</span>
-                                    <?php elseif ($row['status'] === 'rejected'): ?>
-                                        <span class="badge bg-danger">Ditolak</span>
-                                    <?php elseif ($row['status'] === 'dikembalikan'): ?>
-                                        <span class="badge bg-success">Dikembalikan</span>
-                                    <?php elseif (is_null($row['status']) || trim($row['status']) === ''): ?>
-                                        <span class="badge bg-secondary">Proses</span>
-                                    <?php else: ?>
-                                        <span class="badge bg-secondary"><?= htmlspecialchars($row['status']) ?></span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($row['status'] === 'pending'): ?>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan</button>
-                                    <?php elseif ($row['status'] === ''): ?>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan Pengembalian</button>
-                                    <?php elseif ($row['status'] === 'dipinjam'): ?>
-                                        <a href="pages/kembali_form.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger">Kembalikan</a>
-                                    <?php elseif ($row['status'] === 'rejected'): ?>
-                                        <span class="text-muted">-</span>
-                                    <?php elseif (is_null($row['status']) || trim($row['status']) === ''): ?>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan</button>
-                                    <?php else: ?>
-                                        <a href="pages/lihat_BA.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-success" target="_blank">Cetak BA</a>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p class="text-muted">Belum ada riwayat peminjaman.</p>
-            <?php endif; ?>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+
+        <?php else: ?>
+            <p class="text-muted">Belum ada riwayat peminjaman.</p>
+        <?php endif; ?>
+
         </div>
     </div>
 </div>
@@ -146,7 +150,6 @@ include("includes/navbar.php");
 .btn-dark:hover {
   background-color: #74652fff !important;
 }
-
 </style>
 
 <?php include("includes/footer.php"); ?>
