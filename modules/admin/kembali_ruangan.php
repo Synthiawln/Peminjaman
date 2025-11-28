@@ -69,7 +69,7 @@ $pdf->MultiCell(0,8,
 $pdf->Output('F', $filename);
 
 // notif
-$link = "/PinjamRuanganKendaraan/pdf-kembali/ruangan/".date("Y")."/BA_RUANGAN_".$data['id'].".pdf";
+// $link = "/PinjamRuanganKendaraan/pdf-kembali/ruangan/".date("Y")."/BA_RUANGAN_".$data['id'].".pdf";
 
 $con->query("
     INSERT INTO notifications (id_user, message, created_at)

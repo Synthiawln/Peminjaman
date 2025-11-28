@@ -68,7 +68,7 @@ $pdf->MultiCell(0,8,"Telah dikembalikan kendaraan dengan kode peminjaman ".$data
 $pdf->Output('F', $filename);
 
 // === KIRIM NOTIF KE USER ===
-$link = "/PinjamRuanganKendaraan/pdf-kembali/" . date("Y") . "/BA_" . $data['id'] . ".pdf";
+// $link = "/PinjamRuanganKendaraan/pdf-kembali/" . date("Y") . "/BA_" . $data['id'] . ".pdf";
 
 $con->query("
     INSERT INTO notifications (id_user, message) 
