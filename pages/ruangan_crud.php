@@ -2,19 +2,12 @@
 session_start();
 require_once("../koneksi.php");
 
-
 if (!isset($_SESSION['username'])) {
     header('Location: ../login.php');
     exit();
 }
 
-include("../includes/header.php");
-include("../includes/navbar.php");
-
-$action = $_GET['action'] ?? '';
-$id = $_GET['id'] ?? null;
-
-
+// Handle POST requests before any output
 if (isset($_POST['tambah'])) {
     $nama = $_POST['nama_ruangan'];
     $lokasi = $_POST['lokasi'];
@@ -39,7 +32,6 @@ if (isset($_POST['tambah'])) {
     echo "<script>alert('Data ruangan berhasil ditambahkan!');window.location='ruangan_crud.php';</script>";
     exit;
 }
-
 
 if (isset($_POST['edit'])) {
     $id = $_POST['id'];
@@ -67,7 +59,6 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     $stmt = $con->prepare("DELETE FROM ruangan WHERE id=?");
@@ -77,6 +68,12 @@ if (isset($_GET['hapus'])) {
     echo "<script>alert('Data ruangan berhasil dihapus!');window.location='ruangan_crud.php';</script>";
     exit;
 }
+
+include("../includes/header.php");
+include("../includes/navbar.php");
+
+$action = $_GET['action'] ?? '';
+$id = $_GET['id'] ?? null;
 ?>
 
 <div class="container mt-4">

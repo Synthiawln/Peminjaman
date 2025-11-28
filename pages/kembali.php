@@ -142,6 +142,7 @@ include("../includes/navbar.php");
 
                         <?php elseif ($row['status'] === 'dikembalikan'): ?>
                             <a href="lihat_BA.php?id=<?= $row['id']; ?>" 
+
                                 class="btn btn-sm btn-outline-success" target="_blank">Cetak BA</a>
 
                         <?php else: ?>
@@ -203,11 +204,13 @@ include("../includes/navbar.php");
                                 <button class="btn btn-sm btn-outline-secondary" disabled>Menunggu Persetujuan Pengembalian</button>
 
                             <?php elseif ($row['status'] === 'dipinjam'): ?>
+                                
                                 <a href="kembali_form.php?id=<?= $row['id']; ?>" 
                                     class="btn btn-sm btn-outline-danger">Kembalikan</a>
 
                             <?php elseif ($row['status'] === 'dikembalikan'): ?>
                                 <a href="lihat_BA.php?id=<?= $row['id']; ?>" 
+
                                     class="btn btn-sm btn-outline-success" target="_blank">Cetak BA</a>
 
                             <?php else: ?>

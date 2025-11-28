@@ -2,17 +2,12 @@
 session_start();
 include_once("../koneksi.php");
 
-
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'super_admin') {
     header("Location: ../login.php");
     exit();
 }
 
-$pageTitle = "Kelola User";
-include("../includes/header.php");
-include("../includes/navbar.php");
-
-
+// Handle POST requests before any output
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = trim($_POST['nama']);
     $username = trim($_POST['username']);
@@ -20,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
     if (!empty($_POST['id'])) {
-        
         $id = $_POST['id'];
         if ($password) {
             $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -30,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $_SESSION['msg'] = "Data user berhasil diperbarui.";
     } else {
-        
         $hash = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $con->prepare("INSERT INTO user (nama, username, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
         $stmt->bind_param("ssss", $nama, $username, $hash, $role);
@@ -41,16 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-
+// Handle GET 'hapus' before any output
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
     $con->query("DELETE FROM user WHERE id=$id");
     $_SESSION['msg'] = "User berhasil dihapus.";
-    header("Location: user_crud.php");
+    header("Location: user_crud.php");  // Redirect back to user_crud.php after deletion
     exit();
 }
 
-
+// Handle GET 'edit' (no headers here)
 $editUser = null;
 if (isset($_GET['edit'])) {
     $id = intval($_GET['edit']);
@@ -58,7 +51,11 @@ if (isset($_GET['edit'])) {
     $editUser = $res->fetch_assoc();
 }
 
+$pageTitle = "Kelola User";
+include("../includes/header.php");
+include("../includes/navbar.php");
 
+// Display message if set
 if (isset($_SESSION['msg'])) {
     echo "<div class='alert alert-success text-center'>" . $_SESSION['msg'] . "</div>";
     unset($_SESSION['msg']);
@@ -71,7 +68,6 @@ if (isset($_SESSION['msg'])) {
         <a href="../modules/admin/superadmin.php" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
     </div>
 
-    
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-dark text-white">
             <?= $editUser ? 'Edit User' : 'Tambah User Baru'; ?>
@@ -118,7 +114,6 @@ if (isset($_SESSION['msg'])) {
         </div>
     </div>
 
-  
     <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white">Daftar User</div>
         <div class="card-body table-responsive">

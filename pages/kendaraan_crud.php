@@ -2,19 +2,12 @@
 session_start();
 include_once("../koneksi.php");
 
-
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['super_admin', 'admin_kendaraan'])) {
     header("Location: ../login.php");
     exit();
 }
 
-include("../includes/header.php");
-include("../includes/navbar.php");
-
-$action = $_GET['action'] ?? '';
-$id = $_GET['id'] ?? null;
-
-
+// Handle POST 'tambah' before any output
 if (isset($_POST['tambah'])) {
     $nama = $_POST['nama_kendaraan'];
     $plat = $_POST['no_polisi'];
@@ -39,7 +32,7 @@ if (isset($_POST['tambah'])) {
     exit;
 }
 
-
+// Handle POST 'edit' before any output
 if (isset($_POST['edit'])) {
     $id = $_POST['id'];
     $nama = $_POST['nama_kendaraan'];
@@ -65,13 +58,19 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-
+// Handle GET 'hapus' before any output
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     $con->query("DELETE FROM kendaraan WHERE id='$id'");
     header("Location: kendaraan_crud.php");
     exit;
 }
+
+include("../includes/header.php");
+include("../includes/navbar.php");
+
+$action = $_GET['action'] ?? '';
+$id = $_GET['id'] ?? null;
 ?>
 
 <div class="container mt-4">
