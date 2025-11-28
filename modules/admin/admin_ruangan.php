@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once("../../koneksi.php");
-
+$minDate = date('Y-m-d');
 
 $adminRoles = ['admin_ruangan','super_admin'];
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
@@ -13,6 +13,46 @@ $pageTitle = "Dashboard Admin Ruangan";
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 
+// / Handle form submission for direct loan
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pinjamkan_ruangan'])) {
+    $id_user = $_POST['id_user'];
+    $id_ruangan = $_POST['id_ruangan'];
+    $tanggal_pinjam = $_POST['tanggal_pinjam'];
+    $tanggal_kembali = $_POST['tanggal_kembali'];
+    $keterangan = $_POST['keterangan'] ?? '';
+
+    // Validate inputs
+    if (empty($id_user) || empty($id_ruangan) || empty($tanggal_pinjam) || empty($tanggal_kembali)) {
+        $error = "Semua field harus diisi.";
+    } elseif (strtotime($tanggal_pinjam) >= strtotime($tanggal_kembali)) {
+        $error = "Tanggal kembali harus setelah tanggal pinjam.";
+    } else {
+        // Check if vehicle is available
+        $check_vehicle = $con->prepare("SELECT status FROM ruangan WHERE id = ?");
+        $check_vehicle->bind_param("i", $id_ruangan);
+        $check_vehicle->execute();
+        $vehicle_status = $check_vehicle->get_result()->fetch_assoc()['status'];
+        if ($vehicle_status !== 'tersedia') {
+            $error = "Ruangan tidak tersedia.";
+        } else {
+            // Generate unique kode_peminjaman
+            $kode_peminjaman = 'ADM-' . date('Ymd') . '-' . rand(1000, 9999);
+
+            // Insert into peminjaman
+            $stmt = $con->prepare("INSERT INTO peminjaman (id_user, id_item, jenis, tanggal_pinjam, tanggal_kembali, status, kode_peminjaman, keterangan_user, created_at) VALUES (?, ?, 'ruangan', ?, ?, 'dipinjam', ?, ?, NOW())");
+            $stmt->bind_param("iissss", $id_user, $id_ruangan, $tanggal_pinjam, $tanggal_kembali, $kode_peminjaman, $keterangan);
+            if ($stmt->execute()) {
+                // Update vehicle status
+                $update_vehicle = $con->prepare("UPDATE ruangan SET status = 'dipinjam' WHERE id = ?");
+                $update_vehicle->bind_param("i", $id_ruangan);
+                $update_vehicle->execute();
+                $success = "Ruangan berhasil dipinjamkan.";
+            } else {
+                $error = "Gagal meminjamkan ruangan.";
+            }
+        }
+    }
+}
 
 $totalRuangan = $con->query("SELECT COUNT(*) AS total FROM ruangan")->fetch_assoc()['total'];
 $ruanganDipinjam = $con->query("SELECT COUNT(*) AS total FROM ruangan WHERE status='dipinjam'")->fetch_assoc()['total'];
@@ -56,6 +96,66 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     $totals[] = (int)$row['total'];
 }
 ?>
+
+    <!-- Form Pinjamkan Ruangan untuk User Tertentu -->
+<div class="container mt-4">
+    <p class="text-muted">Kelola data peminjaman dan ruangan.</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+            <i class="bi bi-plus-circle me-2"></i>
+            <span>Pinjamkan Ruangan untuk User Tertentu</span>
+        </div>
+        <div class="card-body">
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger"><?= $error ?></div>
+            <?php endif; ?>
+            <?php if (isset($success)): ?>
+                <div class="alert alert-success"><?= $success ?></div>
+            <?php endif; ?>
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="id_user" class="form-label">Pilih User</label>
+                        <select class="form-select" id="id_user" name="id_user" required>
+                            <option value="">-- Pilih User --</option>
+                            <?php
+                            $users = $con->query("SELECT id, nama, username FROM user ORDER BY nama ASC");
+                            while ($u = $users->fetch_assoc()): ?>
+                                <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['nama']) ?> (<?= htmlspecialchars($u['username']) ?>)</option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_ruangan" class="form-label">Pilih Ruangan</label>
+                        <select class="form-select" id="id_ruangan" name="id_ruangan" required>
+                            <option value="">-- Pilih Ruangan --</option>
+                            <?php
+                            $vehicles = $con->query("SELECT id, nama_ruangan, lokasi FROM ruangan WHERE status='tersedia' ORDER BY nama_ruangan ASC");
+                            while ($v = $vehicles->fetch_assoc()): ?>
+                                <option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['nama_ruangan']) ?> (<?= htmlspecialchars($v['lokasi']) ?>)</option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
+                        <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam" required min="<?= $minDate ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
+                        <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required min="<?= $minDate ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" name="pinjamkan_ruangan" class="btn btn-primary">Pinjamkan Ruangan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 <div class="container mt-4">
     <h3 class="mb-3">Dashboard Admin Ruangan</h3>
@@ -218,7 +318,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td class="text-center">
                                 <a href="kembali_ruangan.php?id=<?= $r['id'] ?>&action=approve"
                                 class="btn btn-sm btn-success"
-                                onclick="return confirm('Setujui pengembalian kendaraan ini?')">
+                                onclick="return confirm('Setujui pengembalian ruangan ini?')">
                                 Setujui
                                 </a>
 
