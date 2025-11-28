@@ -158,7 +158,7 @@ include("../../includes/navbar.php");
                             <td>
                                 <?php if ($r['status'] === 'dipinjam'|| $r['status']== ''): ?>
                                     <span class="status-label tersedia">Belum Dikembalikan</span>
-                                <?php elseif ($row['status'] === 'pending'): ?>
+                                <?php elseif ($r['status'] === 'pending'): ?>
                                     <span class="status-label tolak">Menunggu persetujuan</span>
                                 <?php elseif ($r['status'] === 'rejected'): ?>
                                     <span class="status-label tersedia">Ditolak</span>

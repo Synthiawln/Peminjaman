@@ -98,7 +98,7 @@ if ($role === 'super_admin') {
             <a class="nav-link text-light fw-semibold" href="<?= $pathPrefix ?>index.php">🏠 Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light fw-semibold" href="#riwayat">📜 Riwayat</a>
+            <a class="nav-link text-light fw-semibold" href="<?= $pathPrefix ?>pages/kembali.php">📜 Riwayat</a>
           </li>
         <?php endif; ?>
       </ul>
