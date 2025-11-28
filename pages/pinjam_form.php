@@ -56,11 +56,21 @@ $minDate = date('Y-m-d');
   </div>
 </div>
   <script>
-  document.querySelector("form").addEventListener("submit", function() {
-      setTimeout(function() {
-          window.location.href = "../index.php";
-      }, 500);
-  });
+    document.querySelectorAll('input[type="date"]').forEach(function(input) {
+        input.addEventListener('click', function() {
+            if (this.showPicker) {
+                this.showPicker();
+            }
+        });
+    });
+
+    // script redirect setelah submit
+    document.querySelector("form").addEventListener("submit", function() {
+        setTimeout(function() {
+            window.location.href = "../index.php";
+        }, 500);
+    });
   </script>
+
 </body>
 </html>
