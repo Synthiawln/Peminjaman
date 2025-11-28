@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once("../../koneksi.php");
-
+$minDate = date('Y-m-d');
 
 $adminRoles = ['admin_kendaraan', 'super_admin'];
 if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) {
@@ -12,6 +12,47 @@ if (!isset($_SESSION['username']) || !in_array($_SESSION['role'], $adminRoles)) 
 $pageTitle = "Dashboard Admin Kendaraan";
 include("../../includes/header.php");
 include("../../includes/navbar.php");
+
+// / Handle form submission for direct loan
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pinjamkan_kendaraan'])) {
+    $id_user = $_POST['id_user'];
+    $id_kendaraan = $_POST['id_kendaraan'];
+    $tanggal_pinjam = $_POST['tanggal_pinjam'];
+    $tanggal_kembali = $_POST['tanggal_kembali'];
+    $keterangan = $_POST['keterangan'] ?? '';
+
+    // Validate inputs
+    if (empty($id_user) || empty($id_kendaraan) || empty($tanggal_pinjam) || empty($tanggal_kembali)) {
+        $error = "Semua field harus diisi.";
+    } elseif (strtotime($tanggal_pinjam) >= strtotime($tanggal_kembali)) {
+        $error = "Tanggal kembali harus setelah tanggal pinjam.";
+    } else {
+        // Check if vehicle is available
+        $check_vehicle = $con->prepare("SELECT status FROM kendaraan WHERE id = ?");
+        $check_vehicle->bind_param("i", $id_kendaraan);
+        $check_vehicle->execute();
+        $vehicle_status = $check_vehicle->get_result()->fetch_assoc()['status'];
+        if ($vehicle_status !== 'tersedia') {
+            $error = "Kendaraan tidak tersedia.";
+        } else {
+            // Generate unique kode_peminjaman
+            $kode_peminjaman = 'ADM-' . date('Ymd') . '-' . rand(1000, 9999);
+
+            // Insert into peminjaman
+            $stmt = $con->prepare("INSERT INTO peminjaman (id_user, id_item, jenis, tanggal_pinjam, tanggal_kembali, status, kode_peminjaman, keterangan_user, created_at) VALUES (?, ?, 'kendaraan', ?, ?, 'dipinjam', ?, ?, NOW())");
+            $stmt->bind_param("iissss", $id_user, $id_kendaraan, $tanggal_pinjam, $tanggal_kembali, $kode_peminjaman, $keterangan);
+            if ($stmt->execute()) {
+                // Update vehicle status
+                $update_vehicle = $con->prepare("UPDATE kendaraan SET status = 'dipinjam' WHERE id = ?");
+                $update_vehicle->bind_param("i", $id_kendaraan);
+                $update_vehicle->execute();
+                $success = "Kendaraan berhasil dipinjamkan.";
+            } else {
+                $error = "Gagal meminjamkan kendaraan.";
+            }
+        }
+    }
+}
 
 
 $totalKendaraan = $con->query("SELECT COUNT(*) AS total FROM kendaraan")->fetch_assoc()['total'];
@@ -55,6 +96,65 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     $totals[] = (int)$row['total'];
 }
 ?>
+    <!-- Form Pinjamkan Kendaraan untuk User Tertentu -->
+<div class="container mt-4">
+    <p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+            <i class="bi bi-plus-circle me-2"></i>
+            <span>Pinjamkan Kendaraan untuk User Tertentu</span>
+        </div>
+        <div class="card-body">
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger"><?= $error ?></div>
+            <?php endif; ?>
+            <?php if (isset($success)): ?>
+                <div class="alert alert-success"><?= $success ?></div>
+            <?php endif; ?>
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="id_user" class="form-label">Pilih User</label>
+                        <select class="form-select" id="id_user" name="id_user" required>
+                            <option value="">-- Pilih User --</option>
+                            <?php
+                            $users = $con->query("SELECT id, nama, username FROM user ORDER BY nama ASC");
+                            while ($u = $users->fetch_assoc()): ?>
+                                <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['nama']) ?> (<?= htmlspecialchars($u['username']) ?>)</option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_kendaraan" class="form-label">Pilih Kendaraan</label>
+                        <select class="form-select" id="id_kendaraan" name="id_kendaraan" required>
+                            <option value="">-- Pilih Kendaraan --</option>
+                            <?php
+                            $vehicles = $con->query("SELECT id, nama_kendaraan, no_polisi FROM kendaraan WHERE status='tersedia' ORDER BY nama_kendaraan ASC");
+                            while ($v = $vehicles->fetch_assoc()): ?>
+                                <option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['nama_kendaraan']) ?> (<?= htmlspecialchars($v['no_polisi']) ?>)</option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
+                        <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam" required min="<?= $minDate ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
+                        <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required min="<?= $minDate ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" name="pinjamkan_kendaraan" class="btn btn-primary">Pinjamkan Kendaraan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 <div class="container mt-4">
     <p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
