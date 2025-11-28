@@ -123,7 +123,7 @@ CREATE TABLE `peminjaman` (
   `id_item` int(11) NOT NULL,
   `tanggal_pinjam` date DEFAULT NULL,
   `tanggal_kembali` date DEFAULT NULL,
-  `status` enum('pending','approved','rejected','dipinjam','dikembalikan') DEFAULT 'pending',
+  `status` enum('pending_return','pending','approved','rejected','dipinjam','dikembalikan') DEFAULT 'pending',
   `keterangan_user` text DEFAULT NULL,
   `lo` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),

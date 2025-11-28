@@ -186,7 +186,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             JOIN user u ON p.id_user = u.id
             JOIN ruangan k ON p.id_item = k.id
             WHERE p.jenis = 'ruangan'
-            AND p.status = 'pending_return'
+            AND p.status = ''
             ORDER BY p.tanggal_kembali ASC
             ");
 
@@ -311,7 +311,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
                             <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
                             <td>
-                                <?php if ($row['status'] === 'dipinjam'): ?>
+                                <?php if ($row['status'] === 'dipinjam' || $row['status'] === ''): ?>
                                     <span class="status-label pinjam">Belum Dikembalikan</span>
                                 <?php else: ?>
                                     <span class="status-label kembali">Sudah Dikembalikan</span>

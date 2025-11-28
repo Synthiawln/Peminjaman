@@ -1,7 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
-require('../fpdf/fpdf.php');
+include_once("../../koneksi.php");
+require('../../fpdf/fpdf.php');
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin_ruangan') {
     die("Unauthorized.");
@@ -29,14 +29,21 @@ if (!$data) {
     die("Data peminjaman ruangan tidak ditemukan.");
 }
 
-if ($data['status'] !== 'menunggu_persetujuan') {
+if ($data['status'] !== '') {
     die("Status tidak valid untuk approve.");
 }
 
-// update status
+// update status peminjaman
 $up = $con->prepare("UPDATE peminjaman SET status='dikembalikan', tanggal_kembali_aktual=NOW() WHERE id=?");
 $up->bind_param("i", $id);
 $up->execute();
+
+// === UPDATE STATUS Ruangan MENJADI TERSEDIA ===
+$up_item = $con->prepare("UPDATE ruangan SET status='tersedia' WHERE id=?");
+$up_item->bind_param("i", $data['id_item']); 
+if (!$up_item->execute()) {
+    die("Gagal mengupdate status ruangan: " . $up_item->error);
+}
 
 // PDF
 $folder = "../pdf-kembali/ruangan/".date("Y");

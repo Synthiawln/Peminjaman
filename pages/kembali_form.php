@@ -77,7 +77,7 @@ if ($id_peminjaman) {
 
     <?php if (isset($peminjaman)): ?>
 
-      <form action="kembali_proses.php" method="POST">
+      <form action="kembali_proses_secure.php" method="POST">
         <input type="hidden" name="id_peminjaman" value="<?= htmlspecialchars($peminjaman['id']) ?>">
 
         <div class="mb-3">
@@ -100,7 +100,7 @@ if ($id_peminjaman) {
 
     <?php else: ?>
 
-      <form action="kembali_proses.php" method="POST">
+      <form action="kembali_proses_secure.php" method="POST">
         <div class="mb-3">
           <label class="form-label">Pilih Peminjaman yang Akan Dikembalikan</label>
           <select name="id_peminjaman" class="form-select" required>

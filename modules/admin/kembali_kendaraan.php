@@ -1,7 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
-require('../fpdf/fpdf.php');
+include_once("../../koneksi.php");
+require('../../fpdf/fpdf.php');
 
 // === CEK ROLE ADMIN ===
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin_kendaraan') {
@@ -32,7 +32,7 @@ if (!$data) {
 }
 
 // === HANYA BISA DI-APPROVE JIKA STATUS pending_return ===
-if ($data['status'] !== 'pending_return') {
+if ($data['status'] !== '') {
     die("Status tidak valid untuk approve.");
 }
 
