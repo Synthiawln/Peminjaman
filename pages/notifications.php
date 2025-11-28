@@ -52,21 +52,11 @@ $con->query("UPDATE notifications SET is_read = 1 WHERE id_user = " . intval($ui
             $msg = $n['message'];
             $url = null;
 
-            /*
-              —————————————————————
-              1) DETEKSI LINK PDF DARI NOTIF
-              —————————————————————
-              Format PDF hasil approve:
-              http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/BA_xxx.pdf
-            */
-
             if (preg_match('#pdf-kembali\/\d{4}\/[A-Za-z0-9_\-\.]+\.pdf#i', $msg, $m)) {
-                // path relatifnya
-                $relative = $m[0]; // contoh: pdf-kembali/2025/BA_1234.pdf
+                $relative = $m[0]; 
                 $url = $BASE . "/" . $relative;
             }
 
-            // Simpan pesan murni (tanpa link)
             $displayMsg = preg_replace('#https?://[^\s]+#i', '', $msg);
           ?>
           <li class="list-group-item">
