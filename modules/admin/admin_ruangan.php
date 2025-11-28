@@ -317,6 +317,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td>
                                 <?php if ($row['status'] === 'dipinjam' || $row['status'] === ''): ?>
                                     <span class="status-label pinjam">Belum Dikembalikan</span>
+                                <?php elseif ($row['status'] === 'pending'): ?>
+                                    <span class="status-label tolak">Menunggu persetujuan</span>
                                 <?php elseif ($row['status'] === 'rejected'): ?>
                                     <span class="status-label tolak">Ditolak</span>
                                 <?php else: ?>
