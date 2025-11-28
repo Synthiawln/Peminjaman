@@ -239,7 +239,7 @@ $pdf->SetFont('Arial','',11);
 $pdf->Cell($col,6,'Pihak Pertama,',0,0,'C');
 $pdf->Cell($col,6,'Pihak Kedua,',0,1,'C');
 
-$pdf->Ln(24);
+$pdf->Ln(23);
 
 $pdf->SetFont('Arial','BU',11);
 $pdf->Cell($col,6,$penanggung_jawab,0,0,'C');
@@ -251,7 +251,6 @@ $pdf->Cell($col,6,'NIP. '.$data['peminjam_nip'],0,1,'C');
 
 $pdf->Ln(4);
 
-// ===== MENGETAHUI =====
 $pdf->SetFont('Arial','',11);
 $pdf->Cell(0,6,'Mengetahui,',0,1,'C');
 $pdf->Ln(23);

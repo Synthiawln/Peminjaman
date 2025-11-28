@@ -72,7 +72,7 @@ $link = "/PinjamRuanganKendaraan/pdf-kembali/" . date("Y") . "/BA_" . $data['id'
 
 $con->query("
     INSERT INTO notifications (id_user, message) 
-    VALUES ({$data['id_user']}, 'Pengembalian kendaraan disetujui. $link', NOW())
+    VALUES ({$data['id_user']}, 'Pengembalian kendaraan disetujui. $link')
 ");
 
 // === REDIRECT ===
