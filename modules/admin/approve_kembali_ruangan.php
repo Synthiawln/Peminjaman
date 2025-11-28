@@ -32,24 +32,31 @@ if (!$data) {
 
 // Jika admin menolak pengembalian
 if ($action === 'reject') {
+
+    // Update status peminjaman menjadi 'dipinjam'
     $stmt_rej = $con->prepare("UPDATE peminjaman SET status='dipinjam' WHERE id=?");
     $stmt_rej->bind_param("i", $id);
     $stmt_rej->execute();
-
-    // pastikan tabel notifikasi ada
-    $con->query("CREATE TABLE IF NOT EXISTS notifications (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        id_user INT,
-        message TEXT,
-        is_read TINYINT(1) DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB");
-
-    $msgrej = 'Permintaan pengembalian ruangan Anda ditolak oleh admin.';
+    
+    // Ambil id_user dari tabel peminjaman berdasarkan id peminjaman
+    $stmt_get_user = $con->prepare("SELECT id_user FROM peminjaman WHERE id=?");
+    $stmt_get_user->bind_param("i", $id);
+    $stmt_get_user->execute();
+    $result_user = $stmt_get_user->get_result();
+    $user_data = $result_user->fetch_assoc();
+    $id_user = $user_data['id_user'] ?? null;
+    
+    if ($id_user === null) {
+        die("Error: User ID tidak ditemukan untuk peminjaman ini.");
+    }
+    
+    // Buat pesan dinamis berdasarkan keterangan admin, sehingga user bisa melihat komentar
+    $msgrej = 'Permintaan pengembalian ruangan Anda ditolak oleh admin.' ;
+    
     $stmtnr = $con->prepare("INSERT INTO notifications (id_user, message) VALUES (?, ?)");
-    $stmtnr->bind_param("is", $data['peminjam_id'], $msgrej);
+    $stmtnr->bind_param("is", $id_user, $msgrej);
     $stmtnr->execute();
-
+    
     header('Location: admin_ruangan.php');
     exit();
 }

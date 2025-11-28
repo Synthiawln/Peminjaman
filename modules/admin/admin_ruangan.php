@@ -132,7 +132,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
 
     <!-- Permintaan pending -->
-    <div class="card shadow-sm mb-5">
+    <div class="row">
+    <div class="col-lg-6 mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
             <i class="bi bi-hourglass-split me-2"></i>
             <span>Permintaan Peminjaman Ruangan (Menunggu Persetujuan)</span>
@@ -171,7 +172,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <div class="card shadow-sm mb-5">
+    <div class="col-lg-6 mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #5e4c2e;">
             <i class="bi bi-reply-all me-2"></i>
             <span>Permintaan Pengembalian Ruangan (Menunggu Persetujuan)</span>
@@ -180,7 +181,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         <div class="card-body table-responsive">
             <?php
             $pendingReturn = $con->prepare("
-            SELECT p.id, p.kode_peminjaman, p.tanggal_kembali_aktual,
+            SELECT p.id, p.kode_peminjaman, p.tanggal_kembali,p.keterangan_user,
             u.nama AS peminjam, k.nama_ruangan
             FROM peminjaman p
             JOIN user u ON p.id_user = u.id
@@ -201,6 +202,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                         <th>Peminjam</th>
                         <th>Ruangan</th>
                         <th>Tgl. Kembali Diajukan</th>
+                        <th>Keterangan</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -210,7 +212,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td><?= htmlspecialchars($r['kode_peminjaman']) ?></td>
                             <td><?= htmlspecialchars($r['peminjam']) ?></td>
                             <td><?= htmlspecialchars($r['nama_ruangan']) ?></td>
-                            <td><?= htmlspecialchars($r['tanggal_kembali_aktual']) ?></td>
+                            <td><?= htmlspecialchars($r['tanggal_kembali']) ?></td>
+                            <td><?= htmlspecialchars($r['keterangan_user'] ?: '-') ?></td>
 
                             <td class="text-center">
                                 <a href="kembali_ruangan.php?id=<?= $r['id'] ?>&action=approve"
@@ -219,7 +222,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                                 Setujui
                                 </a>
 
-                                <a href="kembali_ruangan.php?id=<?= $r['id'] ?>&action=reject"
+                                <a href="approve_kembali_ruangan.php?id=<?= $r['id'] ?>&action=reject"
                                 class="btn btn-sm btn-danger"
                                 onclick="return confirm('Tolak pengembalian ini?')">
                                 Tolak
@@ -230,6 +233,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 
     <div class="card shadow-sm mb-4">
@@ -313,6 +317,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td>
                                 <?php if ($row['status'] === 'dipinjam' || $row['status'] === ''): ?>
                                     <span class="status-label pinjam">Belum Dikembalikan</span>
+                                <?php elseif ($row['status'] === 'rejected'): ?>
+                                    <span class="status-label tolak">Ditolak</span>
                                 <?php else: ?>
                                     <span class="status-label kembali">Sudah Dikembalikan</span>
                                 <?php endif; ?>

@@ -123,104 +123,112 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <div class="card shadow-sm mb-5">
-        <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
-            <i class="bi bi-hourglass-split me-2"></i>
-            <span>Permintaan Peminjaman Kendaraan (Menunggu Persetujuan)</span>
-        </div>
-        <div class="card-body table-responsive">
-            <?php
-            $pending = $con->query("SELECT p.*, u.nama AS peminjam, k.nama_kendaraan FROM peminjaman p JOIN user u ON p.id_user = u.id JOIN kendaraan k ON p.id_item = k.id WHERE p.jenis='kendaraan' AND p.status='pending' ORDER BY p.created_at ASC");
-            ?>
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Kode Temp</th>
-                        <th>Nama Peminjam</th>
-                        <th>Kendaraan</th>
-                        <th>Tgl Pinjam</th>
-                        <th>Tgl Kembali</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($p = $pending->fetch_assoc()): ?>
+   <div class="row">
+    <div class="col-lg-6 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
+                <i class="bi bi-hourglass-split me-2"></i>
+                <span>Permintaan Peminjaman Kendaraan (Menunggu Persetujuan)</span>
+            </div>
+            <div class="card-body table-responsive">
+                <?php
+                $pending = $con->query("SELECT p.*, u.nama AS peminjam, k.nama_kendaraan FROM peminjaman p JOIN user u ON p.id_user = u.id JOIN kendaraan k ON p.id_item = k.id WHERE p.jenis='kendaraan' AND p.status='pending' ORDER BY p.created_at ASC");
+                ?>
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
                         <tr>
-                            <td><?= htmlspecialchars($p['kode_peminjaman'] ?: '-') ?></td>
-                            <td><?= htmlspecialchars($p['peminjam']) ?></td>
-                            <td><?= htmlspecialchars($p['nama_kendaraan']) ?></td>
-                            <td><?= htmlspecialchars($p['tanggal_pinjam']) ?></td>
-                            <td><?= htmlspecialchars($p['tanggal_kembali']) ?></td>
-                            <td class="text-center">
-                                <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=approve" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan ini?')">Setujui</a>
-                                <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=reject" class="btn btn-sm btn-danger" onclick="return confirm('Tolak permintaan ini?')">Tolak</a>
-                            </td>
+                            <th>Kode Temp</th>
+                            <th>Nama Peminjam</th>
+                            <th>Kendaraan</th>
+                            <th>Tgl Pinjam</th>
+                            <th>Tgl Kembali</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php while ($p = $pending->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($p['kode_peminjaman'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($p['peminjam']) ?></td>
+                                <td><?= htmlspecialchars($p['nama_kendaraan']) ?></td>
+                                <td><?= htmlspecialchars($p['tanggal_pinjam']) ?></td>
+                                <td><?= htmlspecialchars($p['tanggal_kembali']) ?></td>
+                                <td class="text-center">
+                                    <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=approve" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan ini?')">Setujui</a>
+                                    <a href="approve_kendaraan.php?id=<?= $p['id'] ?>&action=reject" class="btn btn-sm btn-danger" onclick="return confirm('Tolak permintaan ini?')">Tolak</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="card shadow-sm mb-5">
-        <div class="card-header text-white d-flex align-items-center" style="background-color: #5e4c2e;">
-            <i class="bi bi-reply-all me-2"></i>
-            <span>Permintaan Pengembalian Kendaraan (Menunggu Persetujuan)</span>
-        </div>
+    <div class="col-lg-6 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header text-white d-flex align-items-center" style="background-color: #5e4c2e;">
+                <i class="bi bi-reply-all me-2"></i>
+                <span>Permintaan Pengembalian Kendaraan (Menunggu Persetujuan)</span>
+            </div>
 
-        <div class="card-body table-responsive">
-            <?php
-            $pendingReturn = $con->prepare("
-            SELECT p.id, p.kode_peminjaman, p.tanggal_kembali_aktual,
-            u.nama AS peminjam, k.nama_kendaraan
-            FROM peminjaman p
-            JOIN user u ON p.id_user = u.id
-            JOIN kendaraan k ON p.id_item = k.id
-            WHERE p.jenis = 'kendaraan'
-            AND p.status = ''
-            ORDER BY p.tanggal_kembali ASC
-            ");
+            <div class="card-body table-responsive">
+                <?php
+                $pendingReturn = $con->prepare("
+                SELECT p.id, p.kode_peminjaman, p.tanggal_kembali,p.keterangan_user,
+                u.nama AS peminjam, k.nama_kendaraan
+                FROM peminjaman p
+                JOIN user u ON p.id_user = u.id
+                JOIN kendaraan k ON p.id_item = k.id
+                WHERE p.jenis = 'kendaraan'
+                AND p.status = ''
+                ORDER BY p.tanggal_kembali ASC
+                ");
 
-            $pendingReturn->execute();
-            $result = $pendingReturn->get_result();
-            ?>
+                $pendingReturn->execute();
+                $result = $pendingReturn->get_result();
+                ?>
 
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Kode Pinjam</th>
-                        <th>Peminjam</th>
-                        <th>Kendaraan</th>
-                        <th>Tgl. Kembali Diajukan</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($r = $result->fetch_assoc()): ?>
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
                         <tr>
-                            <td><?= htmlspecialchars($r['kode_peminjaman']) ?></td>
-                            <td><?= htmlspecialchars($r['peminjam']) ?></td>
-                            <td><?= htmlspecialchars($r['nama_kendaraan']) ?></td>
-                            <td><?= htmlspecialchars($r['tanggal_kembali_aktual']) ?></td>
-
-                            <td class="text-center">
-                                <a href="kembali_kendaraan.php?id=<?= $r['id'] ?>&action=approve"
-                                class="btn btn-sm btn-success"
-                                onclick="return confirm('Setujui pengembalian kendaraan ini?')">
-                                Setujui
-                                </a>
-
-                                <a href="kembali_kendaraan.php?id=<?= $r['id'] ?>&action=reject"
-                                class="btn btn-sm btn-danger"
-                                onclick="return confirm('Tolak pengembalian ini?')">
-                                Tolak
-                                </a>
-                            </td>
+                            <th>Kode Pinjam</th>
+                            <th>Peminjam</th>
+                            <th>Kendaraan</th>
+                            <th>Tgl. Kembali Diajukan</th>
+                            <th>Keterangan</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php while ($r = $result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($r['kode_peminjaman']) ?></td>
+                                <td><?= htmlspecialchars($r['peminjam']) ?></td>
+                                <td><?= htmlspecialchars($r['nama_kendaraan']) ?></td>
+                                <td><?= htmlspecialchars($r['tanggal_kembali']) ?></td>
+                                <td><?= htmlspecialchars($r['keterangan_user'] ?: '-') ?></td>
+
+                                <td class="text-center">
+                                    <a href="kembali_kendaraan.php?id=<?= $r['id'] ?>&action=approve"
+                                    class="btn btn-sm btn-success"
+                                    onclick="return confirm('Setujui pengembalian kendaraan ini?')">
+                                    Setujui
+                                    </a>
+
+                                    <a href="approve_kembali_kendaraan.php?id=<?= $r['id'] ?>&action=reject"
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Tolak pengembalian ini?')">
+                                    Tolak
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </div>
     </div>
 
     
@@ -300,10 +308,12 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
                             <td><?= htmlspecialchars($row['nama']); ?></td>
                             <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
-                            <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_kembali_aktual'] ?? '-'); ?></td>
                             <td>
                                 <?php if ($row['status'] === 'dipinjam' || $row['status'] === ''): ?>
                                     <span class="status-label pinjam">Belum Dikembalikan</span>
+                                <?php elseif ($row['status'] === 'rejected'): ?>
+                                    <span class="status-label tolak">Ditolak</span>
                                 <?php else: ?>
                                     <span class="status-label kembali">Sudah Dikembalikan</span>
                                 <?php endif; ?>
@@ -393,6 +403,14 @@ new Chart(ctxLineMinggu, {
 
 .status-label.pinjam {
     background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+} 
+
+.status-label.tolak {
+    background-color: #454544ff;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;

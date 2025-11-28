@@ -156,8 +156,10 @@ include("../../includes/navbar.php");
                             <td><?= htmlspecialchars($r['tanggal_pinjam']); ?></td>
                             <td><?= htmlspecialchars($r['tanggal_kembali'] ?? '-'); ?></td>
                             <td>
-                                <?php if ($r['status'] === 'dipinjam'): ?>
+                                <?php if ($r['status'] === 'dipinjam'|| $r['status']== ''): ?>
                                     <span class="status-label tersedia">Belum Dikembalikan</span>
+                                <?php elseif ($r['status'] === 'rejected'): ?>
+                                    <span class="status-label tersedia">Ditolak</span>
                                 <?php else: ?>
                                     <span class="status-label dipinjam">Sudah Dikembalikan</span>
                                 <?php endif; ?>

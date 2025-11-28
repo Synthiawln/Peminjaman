@@ -140,13 +140,23 @@ if (in_array($jenis, ['kendaraan','ruangan'])) {
         </head>
         <body class="bg-light">
         <div class="container mt-5">
-            <div class="card p-4 shadow-lg">
-                    <h4>Permintaan Peminjaman <?= $jenis === 'kendaraan' ? 'Kendaraan' : 'Ruangan' ?> Terkirim</h4>
-                    <p>Permintaan Anda telah dikirim ke admin <?= $jenis === 'kendaraan' ? 'kendaraan' : 'ruangan' ?> (<strong><?= htmlspecialchars($penanggung_jawab) ?></strong>) untuk disetujui.</p>
-                    <p>Silakan tunggu notifikasi persetujuan. Anda dapat melihat status di halaman riwayat peminjaman.</p>
-                <a href="../index.php" class="btn btn-primary">Kembali ke Beranda</a>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0" style="border-radius: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                    <div class="card-header text-center bg-success text-white" style="border-radius: 15px 15px 0 0;">
+                        <i class="bi bi-check-circle-fill fs-1 mb-2"></i>
+                        <h4 class="mb-0">Permintaan Peminjaman <?= $jenis === 'kendaraan' ? 'Kendaraan' : 'Ruangan' ?> Terkirim</h4>
+                    </div>
+                    <div class="card-body text-center p-5">
+                        <p class="lead">Permintaan Anda telah dikirim ke admin <?= $jenis === 'kendaraan' ? 'kendaraan' : 'ruangan' ?> (<strong><?= htmlspecialchars($penanggung_jawab) ?></strong>) untuk disetujui.</p>
+                        <p class="text-muted">Silakan tunggu notifikasi persetujuan. Anda dapat melihat status di halaman riwayat peminjaman.</p>
+                        <a href="../index.php" class="btn btn-primary btn-lg mt-3" style="border-radius: 25px; padding: 10px 30px;">Kembali ke Beranda</a>
+                    </div>
+                </div>
             </div>
         </div>
+        </div>
+        </body>
         </body>
         </html>
         <?php
