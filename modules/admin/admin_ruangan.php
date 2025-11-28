@@ -313,7 +313,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td><?= htmlspecialchars($row['kode_peminjaman']); ?></td>
                             <td><?= htmlspecialchars($row['nama']); ?></td>
                             <td><?= htmlspecialchars($row['tanggal_pinjam']); ?></td>
-                            <td><?= htmlspecialchars($row['tanggal_kembali'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_kembali_aktual'] ?? '-'); ?></td>
                             <td>
                                 <?php if ($row['status'] === 'dipinjam' || $row['status'] === ''): ?>
                                     <span class="status-label pinjam">Belum Dikembalikan</span>
