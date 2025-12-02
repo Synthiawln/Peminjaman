@@ -53,18 +53,34 @@ if ($action === 'reject') {
     exit();
 }
 
-// === NOMOR BA ===
-function generateUniqueBA($con) {
-    do {
-        $candidate = "BA." . date("Y") . "/TI/" . str_pad(rand(1,9999), 4, "0", STR_PAD_LEFT);
-        $r = $con->query("SELECT COUNT(*) AS cnt FROM peminjaman WHERE kode_peminjaman='".$candidate."'");
-        $cnt = (int)$r->fetch_assoc()['cnt'];
-    } while ($cnt > 0);
+// === NOMOR BA RUANGAN ===
+function generateBA_Ruangan($con) {
+    $bulan = date("m");
+    $tahun = date("Y");
 
-    return $candidate;
+    // cek BA terakhir khusus ruangan
+    $sql = "
+        SELECT kode_peminjaman 
+        FROM peminjaman 
+        WHERE jenis='ruangan' AND kode_peminjaman IS NOT NULL
+        ORDER BY id DESC 
+        LIMIT 1
+    ";
+    $q = $con->query($sql);
+    $row = $q->fetch_assoc();
+
+    if ($row && preg_match('/^(\d+)\//', $row['kode_peminjaman'], $m)) {
+        $next = intval($m[1]) + 1;
+    } else {
+        $next = 1;
+    }
+
+    $no = str_pad($next, 2, '0', STR_PAD_LEFT);
+
+    return "$no/BA-RUANG/XVIII.YOG.1.4/$bulan/$tahun";
 }
 
-$nomor_ba = generateUniqueBA($con);
+$nomor_ba = generateBA_Ruangan($con);
 
 // === UPDATE STATUS ===
 $con->query("UPDATE peminjaman SET status='dipinjam', kode_peminjaman='$nomor_ba' WHERE id=$id");
@@ -87,11 +103,9 @@ class PDF_Ruangan extends FPDF {
         $this->Cell(0,5,'Jl. HOS Cokroaminoto No. 52 Yogyakarta 55244 Telp. (0274) 563635',0,1,'C');
         $this->Ln(1);
 
-        // GARIS TEBAL
         $this->SetLineWidth(0.8);
         $this->Line(10, $this->GetY(), 200, $this->GetY());
 
-        // GARIS TIPIS
         $this->SetLineWidth(0.3);
         $this->Line(10, $this->GetY() + 1.5, 200, $this->GetY() + 1.5);
 
@@ -99,7 +113,7 @@ class PDF_Ruangan extends FPDF {
     }
 }
 
-// === FUNGSI TANGGAL LENGKAP ===
+// === FUNGSI TANGGAL ===
 function namaHariIndo($date) {
     $hariInggris = date('l', strtotime($date));
     $daftar = [
@@ -158,7 +172,7 @@ $pdf->SetFont('Arial','',11);
 $pdf->Cell(0,6,"Nomor : $nomor_ba",0,1,'C');
 $pdf->Ln(2);
 
-// === PARAGRAF PEMBUKA BARU ===
+// === PARAGRAF PEMBUKA ===
 $tglToday = date('Y-m-d');
 $hari = namaHariIndo($tglToday);
 $tanggalPanjang = tanggalLengkapIndo($tglToday);
@@ -216,7 +230,7 @@ $pdf->Write(6, 'Pihak Kedua');
 
 $pdf->Ln(8);
 
-// ===== ISI SERAH TERIMA =====
+// ===== ISI =====
 $pdf->SetFont('Arial','',11);
 
 $detailRuangan =

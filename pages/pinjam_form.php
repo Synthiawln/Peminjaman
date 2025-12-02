@@ -51,6 +51,15 @@ $minDate = date('Y-m-d');
         </div>
       <?php endif; ?>
 
+      <?php if ($jenis === 'ruangan'): ?>
+        <div class="mb-3">
+          <label class="form-label">Permintaan Kelengkapan Sarana/Prasarana</label>
+          <textarea name="tambah_fasilitas" class="form-control" rows="3"
+            placeholder="Contoh: proyektor, tambahan kursi 30, sound system, meja rapat, dll."></textarea>
+          <div class="form-text">Opsional. Isi jika membutuhkan fasilitas tambahan.</div>
+        </div>
+      <?php endif; ?>
+
       <button type="submit" class="btn btn-dark w-100">Kirim Permintaan Peminjaman</button>
     </form>
   </div>

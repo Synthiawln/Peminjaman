@@ -113,7 +113,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                 <div class="alert alert-success"><?= $success ?></div>
             <?php endif; ?>
             <form method="POST">
-                <div class="row">
+                
+                <div class="row g-3">
+
                     <div class="col-md-3">
                         <label for="id_user" class="form-label">Pilih User</label>
                         <select class="form-select" id="id_user" name="id_user" required>
@@ -125,6 +127,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
+
                     <div class="col-md-3">
                         <label for="id_kendaraan" class="form-label">Pilih Kendaraan</label>
                         <select class="form-select" id="id_kendaraan" name="id_kendaraan" required>
@@ -136,19 +139,25 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-3">
                         <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
                         <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam" required min="<?= $minDate ?>">
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-3">
                         <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
                         <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required min="<?= $minDate ?>">
                     </div>
-                    <div class="col-md-2">
+
+                    <!-- Textarea full width biar rapi -->
+                    <div class="col-12">
                         <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
-                        <textarea class="form-control" id="keterangan" name="keterangan" rows="1"></textarea>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
                     </div>
+
                 </div>
+
                 <div class="mt-3">
                     <button type="submit" name="pinjamkan_kendaraan" class="btn btn-primary">Pinjamkan Kendaraan</button>
                 </div>
@@ -156,75 +165,72 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-<div class="container mt-4">
-    <p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
-
-    
-    <div class="row text-center mb-4 g-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                    <h4><?= $totalKendaraan; ?></h4>
-                    <p class = "mb-0">Total Kendaraan</p>
+    <div class="container mt-4"><p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
+        <div class="row text-center mb-4 g-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                        <h4><?= $totalKendaraan; ?></h4>
+                        <p class = "mb-0">Total Kendaraan</p>
+                        </div>
+                    </div>
+                        <i class="bi bi-truck fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                     </div>
                 </div>
-                <i class="bi bi-truck fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4><?= $kendaraanDipinjam; ?></h4>
-                        <p class="mb-0">Kendaraan Dipinjam</p>
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4><?= $kendaraanDipinjam; ?></h4>
+                            <p class="mb-0">Kendaraan Dipinjam</p>
+                        </div>
                     </div>
+                    <i class="bi bi-arrow-repeat fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                 </div>
-                <i class="bi bi-arrow-repeat fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-primary shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                    <h4><?= $kendaraanTersedia; ?></h4>
-                    <p>Kendaraan Tersedia</p>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                        <h4><?= $kendaraanTersedia; ?></h4>
+                        <p>Kendaraan Tersedia</p>
+                        </div>
                     </div>
+                    <i class="bi bi-car-front-fill fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                 </div>
-                  <i class="bi bi-car-front-fill fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
             </div>
         </div>
-    </div>
 
    
-     <div class="row mb-4 g-4">
+        <div class="row mb-4 g-4">
        
-        <div class="col-md-6">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="card-header text-white fw-semibold d-flex align-items-center" style="background: linear-gradient(90deg, #c9890b, #f5c542);">
-                <i class="bi bi-graph-up-arrow me-2"></i> Tren Peminjaman Kendaraan Per Minggu
+            <div class="col-md-6">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header text-white fw-semibold d-flex align-items-center" style="background: linear-gradient(90deg, #c9890b, #f5c542);">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Tren Peminjaman Kendaraan Per Minggu
+                    </div>
+                    <div class="card-body p-4">
+                        <canvas id="lineChartKendaraanMinggu" style="min-height: 295px;"></canvas>
+                    </div>
                 </div>
-            <div class="card-body p-4">
-                <canvas id="lineChartKendaraanMinggu" style="min-height: 295px;"></canvas>
             </div>
-        </div>
-        </div>
 
       
         <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="card-header text-white fw-semibold d-flex align-items-center"style="background: linear-gradient(90deg, #556b2f, #9dc183);">
-                <i class="bi bi-calendar3 me-2"></i> Tren Peminjaman Kendaraan Per Bulan
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header text-white fw-semibold d-flex align-items-center"style="background: linear-gradient(90deg, #556b2f, #9dc183);">
+                    <i class="bi bi-calendar3 me-2"></i> Tren Peminjaman Kendaraan Per Bulan
+                </div>
+                <div class="card-body p-4">
+                    <canvas id="lineChartKendaraan" style="min-height: 280px;"></canvas>
+                </div>
             </div>
-        <div class="card-body p-4">
-            <canvas id="lineChartKendaraan" style="min-height: 280px;"></canvas>
-        </div>
-        </div>
         </div>
     </div>
 
    <div class="row">
-    <div class="col-lg-6 mb-5">
+    <div class="col-lg-12 mb-5">
         <div class="card shadow-sm">
             <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
                 <i class="bi bi-hourglass-split me-2"></i>
@@ -265,7 +271,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <div class="col-lg-6 mb-5">
+    <div class="col-lg-12 mb-5">
         <div class="card shadow-sm">
             <div class="card-header text-white d-flex align-items-center" style="background-color: #5e4c2e;">
                 <i class="bi bi-reply-all me-2"></i>
@@ -331,16 +337,33 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
     </div>
     </div>
 
-    
+    <div class="card shadow-sm mb-5">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #746616cf;">
             <span>Kelola Data Kendaraan</span>
             <a href="../../pages/kendaraan_crud.php" class="btn btn-sm btn-light fw-semibold">+ Tambah Kendaraan</a>
         </div>
         <div class="card-body">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark">
-                    <tr><th>ID</th><th>Nama</th><th>Plat Nomor</th><th>Status</th><th class="text-center">Aksi</th></tr>
-                </thead>
+            <!-- Dropdown Pilihan Jumlah Data -->
+            <div class="mb-2 d-flex justify-content-between align-items-center">
+                <label class="fw-semibold">Tampilkan:</label>
+                <select id="rowLimit" class="form-select w-auto">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="all">Semua</option>
+                </select>
+            </div>
+            <div id="kendaraanWrapper" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px;">
+                <table class="table table-hover align-middle" id="kendaraanTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Kode Barang</th>
+                            <th>Nama</th>
+                            <th>Plat Nomor</th>
+                            <th>Status</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
                 <tbody>
                     <?php
                     $kendaraan = $con->query("SELECT * FROM kendaraan ORDER BY nama_kendaraan ASC");
@@ -348,6 +371,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                     ?>
                     <tr>
                         <td><?= $k['id']; ?></td>
+                        <td><?= htmlspecialchars($k['kode_barang'] ?? '-'); ?></td>
                         <td><?= htmlspecialchars($k['nama_kendaraan']); ?></td>
                         <td><?= htmlspecialchars($k['no_polisi']); ?></td>
                         <td>
@@ -362,9 +386,9 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                                 <i class="bi bi-pencil-square"></i> Edit
                             </a>
                             <a href="../../pages/kendaraan_crud.php?hapus=<?= $k['id']; ?>" 
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Hapus kendaraan ini?')">
-                               <i class="bi bi-trash"></i> Hapus
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('Hapus kendaraan ini?')">
+                            <i class="bi bi-trash"></i> Hapus
                             </a>
                         </td>
                     </tr>
@@ -373,6 +397,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             </table>
         </div>
     </div>
+    
 
     
 
@@ -471,6 +496,44 @@ new Chart(ctxLineMinggu, {
         plugins: { legend: { display: true } }
     }
 });
+
+// === LIMIT TABEL & SCROLL ===
+document.addEventListener("DOMContentLoaded", function () {
+    const rowLimit = document.getElementById("rowLimit");
+    const table = document.getElementById("kendaraanTable").getElementsByTagName("tbody")[0];
+    const rows = table.getElementsByTagName("tr");
+
+    function updateTableLimit() {
+        let limit = rowLimit.value;
+
+        for (let i = 0; i < rows.length; i++) {
+            if (limit === "all" || i < limit) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+
+    rowLimit.addEventListener("change", updateTableLimit);
+    updateTableLimit(); // default awal 5
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const tglPinjam = document.getElementById("tanggal_pinjam");
+    const tglKembali = document.getElementById("tanggal_kembali");
+
+    // Biar saat field diklik langsung buka kalender
+    if (tglPinjam && tglPinjam.showPicker) {
+        tglPinjam.addEventListener("focus", () => tglPinjam.showPicker());
+        tglPinjam.addEventListener("click", () => tglPinjam.showPicker());
+    }
+
+    if (tglKembali && tglKembali.showPicker) {
+        tglKembali.addEventListener("focus", () => tglKembali.showPicker());
+        tglKembali.addEventListener("click", () => tglKembali.showPicker());
+    }
+});
 </script>
 
 <style>
@@ -518,6 +581,16 @@ new Chart(ctxLineMinggu, {
     border-radius: 12px;
     font-size: 0.9em;
 } 
+#kendaraanWrapper::-webkit-scrollbar {
+    width: 8px;
+}
+#kendaraanWrapper::-webkit-scrollbar-thumb {
+    background: #b1a25f;
+    border-radius: 8px;
+}
+#kendaraanWrapper::-webkit-scrollbar-track {
+    background: #eee;
+}
 </style>
 
 <?php include("../../includes/footer.php"); ?>

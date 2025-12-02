@@ -13,6 +13,7 @@ if (isset($_POST['tambah'])) {
     $plat = $_POST['no_polisi'];
     $status = $_POST['status'];
     $keterangan = $_POST['keterangan'];
+    $kode = $_POST['kode_barang'];
 
     $foto = '';
     if (!empty($_FILES['foto']['name'])) {
@@ -24,8 +25,8 @@ if (isset($_POST['tambah'])) {
         $foto = "uploads/" . $fotoName; // simpan path relatif
     }
 
-    $stmt = $con->prepare("INSERT INTO kendaraan (nama_kendaraan, no_polisi, status, keterangan, foto) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $nama, $plat, $status, $keterangan, $foto);
+    $stmt = $con->prepare("INSERT INTO kendaraan (kode_barang, nama_kendaraan, no_polisi, status, keterangan, foto) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $kode, $nama, $plat, $status, $keterangan, $foto);
     $stmt->execute();
 
     header("Location: kendaraan_crud.php");
@@ -40,6 +41,7 @@ if (isset($_POST['edit'])) {
     $status = $_POST['status'];
     $keterangan = $_POST['keterangan'];
     $foto = $_POST['foto_lama'];
+    $kode = $_POST['kode_barang'];
 
     if (!empty($_FILES['foto']['name'])) {
         $targetDir = "../uploads/";
@@ -50,8 +52,8 @@ if (isset($_POST['edit'])) {
         $foto = "uploads/" . $fotoName;
     }
 
-    $stmt = $con->prepare("UPDATE kendaraan SET nama_kendaraan=?, no_polisi=?, status=?, keterangan=?, foto=? WHERE id=?");
-    $stmt->bind_param("sssssi", $nama, $plat, $status, $keterangan, $foto, $id);
+    $stmt = $con->prepare("UPDATE kendaraan SET kode_barang=?, nama_kendaraan=?, no_polisi=?, status=?, keterangan=?, foto=? WHERE id=?");
+    $stmt->bind_param("ssssssi", $kode, $nama, $plat, $status, $keterangan, $foto, $id);
     $stmt->execute();
 
     header("Location: kendaraan_crud.php");
@@ -85,6 +87,10 @@ $id = $_GET['id'] ?? null;
             <div class="card-header bg-dark text-white">Tambah Kendaraan</div>
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
+                    <div class="mb-2">
+                        <label>Kode Barang</label>
+                        <input type="text" name="kode_barang" class="form-control">
+                    </div>
                     <div class="mb-2">
                         <label>Nama Kendaraan</label>
                         <input type="text" name="nama_kendaraan" class="form-control" required>
@@ -123,6 +129,10 @@ $id = $_GET['id'] ?? null;
                     <input type="hidden" name="id" value="<?= $k['id'] ?>">
                     <input type="hidden" name="foto_lama" value="<?= $k['foto'] ?>">
                     <div class="mb-2">
+                        <label>Kode Barang</label>
+                        <input type="text" name="kode_barang" class="form-control" value="<?= $k['kode_barang'] ?>">
+                    </div>
+                    <div class="mb-2">
                         <label>Nama Kendaraan</label>
                         <input type="text" name="nama_kendaraan" class="form-control" value="<?= $k['nama_kendaraan'] ?>">
                     </div>
@@ -159,6 +169,7 @@ $id = $_GET['id'] ?? null;
                 <tr>
                     <th>ID</th>
                     <th>Foto</th>
+                    <th>Kode Barang</th>
                     <th>Nama</th>
                     <th>Plat</th>
                     <th>Status</th>
@@ -180,6 +191,7 @@ $id = $_GET['id'] ?? null;
                             <span class="text-muted">Tidak ada</span>
                         <?php endif; ?>
                     </td>
+                    <td><?= htmlspecialchars($d['kode_barang']) ?></td>
                     <td><?= htmlspecialchars($d['nama_kendaraan']) ?></td>
                     <td><?= htmlspecialchars($d['no_polisi']) ?></td>
                     <td>

@@ -16,14 +16,15 @@ $action = $_GET['action'] ?? '';
 // === LOAD DATA PEMINJAMAN ===
 $stmt = $con->prepare("SELECT p.*, 
         u.nama AS peminjam, u.nip AS peminjam_nip, u.id AS peminjam_id, 
-        k.nama_kendaraan, k.no_polisi 
+        k.nama_kendaraan, k.no_polisi, k.id AS id_item
     FROM peminjaman p 
     JOIN user u ON p.id_user = u.id 
     JOIN kendaraan k ON p.id_item = k.id 
-    WHERE p.id = ? AND p.jenis='kendaraan'");
+    WHERE p.id = ? AND p.jenis='kendaraan' LIMIT 1");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $data = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$data) {
     header('Location: admin_kendaraan.php');
@@ -31,9 +32,10 @@ if (!$data) {
 }
 
 // === DATA PEMINJAM & LO ===
-$penanggung_jawab = $data['lo'] ?? 'PENANGGUNG JAWAB';
+$penanggung_jawab = $data['lo'] ?? 'Pengadministrasi Umum';
 $peminjam_name = $data['peminjam'] ?? '-';
 $peminjam_nip = $data['peminjam_nip'] ?? '-';
+$peminjam_id = $data['peminjam_id'] ?? 0;
 
 $lo_nip = '-';
 if (!empty($penanggung_jawab)) {
@@ -48,9 +50,12 @@ if (!empty($penanggung_jawab)) {
 // === JIKA DITOLAK ADMIN ===
 if ($action === 'reject') {
 
-    $con->query("UPDATE peminjaman SET status='rejected' WHERE id=$id");
+    $upd = $con->prepare("UPDATE peminjaman SET status='rejected' WHERE id = ?");
+    $upd->bind_param("i", $id);
+    $upd->execute();
+    $upd->close();
 
-    // table notif
+    // table notif (buat jika belum ada)
     $con->query("CREATE TABLE IF NOT EXISTS notifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
         id_user INT,
@@ -61,29 +66,67 @@ if ($action === 'reject') {
 
     $msg = 'Permintaan peminjaman kendaraan Anda ditolak oleh admin.';
     $stmtn = $con->prepare("INSERT INTO notifications (id_user, message) VALUES (?, ?)");
-    $stmtn->bind_param("is", $data['peminjam_id'], $msg);
+    $stmtn->bind_param("is", $peminjam_id, $msg);
     $stmtn->execute();
+    $stmtn->close();
 
     header('Location: admin_kendaraan.php');
     exit();
 }
 
 // === GENERATE NOMOR BA ===
-function generateUniqueBA($con) {
-    do {
-        $candidate = "BA." . date("Y") . "/TI/" . str_pad(rand(1,9999), 4, "0", STR_PAD_LEFT);
-        $r = $con->query("SELECT COUNT(*) AS cnt FROM peminjaman WHERE kode_peminjaman = '".$con->real_escape_string($candidate)."'");
-        $cnt = (int)$r->fetch_assoc()['cnt'];
-    } while ($cnt > 0);
+function generateBA($con) {
+    $month = date('m');
+    $year  = date('Y');
 
-    return $candidate;
+    // Cari kode_peminjaman terakhir yang berformat .../MM/YYYY
+    $like = '%' . '/' . $month . '/' . $year;
+    $sql = "SELECT kode_peminjaman FROM peminjaman WHERE kode_peminjaman LIKE ? ORDER BY id DESC LIMIT 1";
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("s", $like);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $counter = 1;
+
+    if ($res && $res->num_rows > 0) {
+        $lastBA = $res->fetch_assoc()['kode_peminjaman'];
+        // Ekspektasi format: NN/BA/XVIII.YOG.1.4/MM/YYYY
+        $parts = explode('/', $lastBA);
+        if (count($parts) >= 1) {
+            $numPart = preg_replace('/[^0-9]/', '', $parts[0]);
+            $numInt = intval($numPart);
+            $counter = $numInt + 1;
+        }
+    }
+    $stmt->close();
+
+    return sprintf("%02d/BA/XVIII.YOG.1.4/%02d/%d", $counter, intval($month), intval($year));
 }
 
-$nomor_ba = generateUniqueBA($con);
+$nomor_ba = generateBA($con);
 
-// Update status
-$con->query("UPDATE peminjaman SET status='dipinjam', kode_peminjaman='".$con->real_escape_string($nomor_ba)."' WHERE id=$id");
-$con->query("UPDATE kendaraan SET status='dipinjam' WHERE id=".$data['id_item']);
+// === Update status + kode BA dan kendaraan ===
+// Gunakan transaksi agar atomic
+$con->begin_transaction();
+
+try {
+    $upd1 = $con->prepare("UPDATE peminjaman SET status = 'dipinjam', kode_peminjaman = ? WHERE id = ?");
+    $upd1->bind_param("si", $nomor_ba, $id);
+    $upd1->execute();
+    $upd1->close();
+
+    $upd2 = $con->prepare("UPDATE kendaraan SET status = 'dipinjam' WHERE id = ?");
+    $upd2->bind_param("i", $data['id_item']);
+    $upd2->execute();
+    $upd2->close();
+
+    $con->commit();
+} catch (Exception $e) {
+    $con->rollback();
+    // Jika gagal update, redirect balik
+    header('Location: admin_kendaraan.php?error=update_failed');
+    exit();
+}
 
 // === BUAT FOLDER TAHUN ===
 $yearDir = date('Y');
@@ -104,7 +147,7 @@ class PDF2 extends FPDF {
         $this->Cell(0,6,'PERWAKILAN PROVINSI DAERAH ISTIMEWA YOGYAKARTA',0,1,'C');
 
         $this->SetFont('Arial','',10);
-        $this->Cell(0,5,'Jl. HOS Cokroaminoto No. 52 Yogyakarta 55244 Telp. (0274) 563635',0,1,'C');
+        $this->Cell(0,5,'Jl. HOS Cokroaminoto No. 52 Yogyakarta 55244 Telepon 0274-563635',0,1,'C');
         $this->Ln(1);
 
         $this->SetLineWidth(0.8);
@@ -129,20 +172,22 @@ function namaHariIndo($date) {
         'Saturday'=>"Sabtu",
         'Sunday'=>"Minggu"
     ];
-    return $daftar[$hariInggris];
+    return $daftar[$hariInggris] ?? $hariInggris;
 }
 
 function terbilang($angka) {
-    $angka = abs($angka);
+    $angka = abs(intval($angka));
     $baca = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
 
     if ($angka < 12) return $baca[$angka];
     elseif ($angka < 20) return terbilang($angka - 10) . " Belas";
-    elseif ($angka < 100) return terbilang($angka/10) . " Puluh " . terbilang($angka % 10);
+    elseif ($angka < 100) return terbilang(intval($angka/10)) . " Puluh " . terbilang($angka % 10);
     elseif ($angka < 200) return "Seratus " . terbilang($angka - 100);
-    elseif ($angka < 1000) return terbilang($angka/100) . " Ratus " . terbilang($angka % 100);
+    elseif ($angka < 1000) return terbilang(intval($angka/100)) . " Ratus " . terbilang($angka % 100);
     elseif ($angka < 2000) return "Seribu " . terbilang($angka - 1000);
-    elseif ($angka < 1000000) return terbilang($angka/1000) . " Ribu " . terbilang($angka % 1000);
+    elseif ($angka < 1000000) return terbilang(intval($angka/1000)) . " Ribu " . terbilang($angka % 1000);
+
+    return strval($angka);
 }
 
 function tanggalLengkapIndo($date) {
@@ -156,7 +201,7 @@ function tanggalLengkapIndo($date) {
         9=>"September", 10=>"Oktober", 11=>"November", 12=>"Desember"
     ];
 
-    return terbilang($d) . " bulan " . $bulan[$m] . " tahun " . terbilang($y);
+    return terbilang($d) . " bulan " . ($bulan[$m] ?? $m) . " tahun " . terbilang($y);
 }
 
 // ======================================================
@@ -165,10 +210,9 @@ function tanggalLengkapIndo($date) {
 $nama = strtolower($data['nama_kendaraan']);
 $jenisRoda = "KENDARAAN RODA EMPAT"; // default
 
-if (strpos($nama, 'sepeda motor') !== false) {
+if (strpos($nama, 'sepeda motor') !== false || strpos($nama, 'motor') !== false) {
     $jenisRoda = "KENDARAAN RODA DUA";
-}
-elseif (strpos($nama, 'roda tiga') !== false) {
+} elseif (strpos($nama, 'roda tiga') !== false) {
     $jenisRoda = "KENDARAAN RODA TIGA";
 }
 
@@ -196,9 +240,7 @@ $hari = namaHariIndo($tglToday);
 $tanggalPanjang = tanggalLengkapIndo($tglToday);
 $tanggalAngka = date('d-m-Y', strtotime($tglToday));
 
-$paragraf1 = 
-"Pada hari {$hari} tanggal {$tanggalPanjang} ({$tanggalAngka}), yang bertanda tangan di bawah ini:";
-
+$paragraf1 = "Pada hari {$hari} tanggal {$tanggalPanjang} ({$tanggalAngka}), yang bertanda tangan di bawah ini:";
 $pdf->SetFont('Arial','',11);
 $pdf->MultiCell(0,6,$paragraf1,0,'J');
 $pdf->Ln(1);
@@ -242,7 +284,7 @@ $pdf->Ln(8);
 
 // === DETAIL KENDARAAN ===
 $pdf->SetFont('Arial','',11);
-$detailKendaraan = 
+$detailKendaraan =
 "Telah dilakukan serah terima Barang Milik Negara (BMN) berupa ".$data['nama_kendaraan']." ".
 "dengan Nomor Polisi ".$data['no_polisi']." dari pihak Pertama kepada pihak Kedua dalam keadaan baik yang untuk selanjutnya BMN tersebut akan dipinjam oleh Pihak Kedua selama melaksanakan tugas di BPK Perwakilan Provinsi Daerah Istimewa Yogyakarta. Selanjutnya Pihak Kedua akan menjaga dan memelihara barang tersebut serta bertanggungjawab apabila terjadi kehilangan atau kerusakan akibat kelalaian Pihak Kedua.";
 
@@ -292,20 +334,23 @@ $filepath = $dir . '/' . $filename;
 $pdf->Output('F', $filepath);
 
 // === NOTIFIKASI ===
+// buat table notif jika belum ada
 $con->query("CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT,
     message TEXT,
     is_read TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)");
+) ENGINE=InnoDB");
 
 $link = 'http://localhost/PinjamRuanganKendaraan/pdf-kembali/'.$yearDir.'/'.$filename;
 $msg = 'Permintaan peminjaman Anda disetujui. Klik untuk melihat/cetak Berita Acara: '.$link;
 
 $stmtn = $con->prepare("INSERT INTO notifications (id_user, message) VALUES (?, ?)");
-$stmtn->bind_param("is", $data['peminjam_id'], $msg);
+$stmtn->bind_param("is", $peminjam_id, $msg);
 $stmtn->execute();
+$stmtn->close();
 
 header('Location: admin_kendaraan.php');
 exit();
+?>

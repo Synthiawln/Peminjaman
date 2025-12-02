@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 27 Nov 2025 pada 07.37
+-- Waktu pembuatan: 02 Des 2025 pada 04.51
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -47,35 +47,36 @@ CREATE TABLE `kendaraan` (
   `no_polisi` varchar(20) DEFAULT NULL,
   `status` enum('tersedia','dipinjam') DEFAULT 'tersedia',
   `keterangan` text DEFAULT NULL,
-  `foto` varchar(255) DEFAULT NULL
+  `foto` varchar(255) DEFAULT NULL,
+  `kode_barang` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `kendaraan`
 --
 
-INSERT INTO `kendaraan` (`id`, `nama_kendaraan`, `no_polisi`, `status`, `keterangan`, `foto`) VALUES
-(2, 'Sedan Camry ', 'AB 11', 'dipinjam', 'Kendaraan Dinas Jabatan', 'uploads/1763688361_Picture1.jpg'),
-(3, 'Station Wagon Wuling', 'AB 1105 IA', 'tersedia', 'Kendaraan Dinas Operational', 'uploads/1763688526_Picture2.jpg'),
-(4, 'Station Wagon Wuling', 'AB 1103 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763688565_Picture3.jpg'),
-(5, 'Mini Bus (Avanza) ', 'AB 1162 IA', 'tersedia', 'Kendaraan Dinas Operasional\r\n\r\n', 'uploads/1763688937_Picture4.jpg'),
-(6, 'Mini Bus (Innova) ', 'AB 1156 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689036_Picture5.jpg'),
-(7, 'Mini Bus (Avanza) ', 'AB 1163 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689128_Picture6.jpg'),
-(8, 'Mini Bus (Innova) ', 'AB 1160 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689391_Picture7.jpg'),
-(9, 'Mini Bus (Innova) ', 'AB II57 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689418_Picture8.jpg'),
-(10, 'Mini Bus (Innova) ', 'AB 1158 IA', 'dipinjam', 'Kendaraan Dinas Operasional', 'uploads/1763689447_Picture9.jpg'),
-(11, 'Mini Bus (Innova) ', 'AB 1161 UH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689482_Picture10.jpg'),
-(12, 'Mini Bus (Innova) ', 'AB 1169 UH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689515_Picture11.jpg'),
-(13, 'Mini Bus (Alphard) ', 'AB 1168 ZZH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689564_Picture13.jpg'),
-(14, 'Mini Bus (Innova) ', 'AB 1159 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763690349_Picture12.jpg'),
-(15, 'Pick Up Suzuki', 'AB 8611 IA', 'dipinjam', 'Kendaraan Dinas Operasional', 'uploads/1763689597_Picture14.jpg'),
-(16, 'Kendaraan Roda Tiga (Viar)', 'AB 3111 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689674_Picture15.jpg'),
-(17, 'Sepeda Motor Honda - NF', 'AB 2824 UH ', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689719_Picture16.jpg'),
-(18, 'Sepeda Motor Yamaha - UE11', 'AB 2211 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689792_Picture17.jpg'),
-(19, 'Sepeda Motor Yamaha - UE11', 'AB 2311 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689862_Picture18.jpg'),
-(20, 'Sepeda Motor Yamaha Lexi', 'AB 2511 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689906_Picture19.jpg'),
-(21, 'Sepeda Motor Yamaha Gear', 'AB 2411 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689937_Picture20.jpg'),
-(22, 'Sepeda Motor Yamaha Mio', 'AB 2611 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689960_Picture21.jpg');
+INSERT INTO `kendaraan` (`id`, `nama_kendaraan`, `no_polisi`, `status`, `keterangan`, `foto`, `kode_barang`) VALUES
+(2, 'Sedan Camry ', 'AB 11', 'tersedia', 'Kendaraan Dinas Jabatan', 'uploads/1763688361_Picture1.jpg', '3020101001'),
+(3, 'Station Wagon Wuling', 'AB 1105 IA', 'tersedia', 'Kendaraan Dinas Operational', 'uploads/1763688526_Picture2.jpg', '3020101003'),
+(4, 'Station Wagon Wuling', 'AB 1103 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763688565_Picture3.jpg', '3020101003'),
+(5, 'Mini Bus (Avanza) ', 'AB 1162 IA', 'tersedia', 'Kendaraan Dinas Operasional\r\n\r\n', 'uploads/1763688937_Picture4.jpg', '3020102003'),
+(6, 'Mini Bus (Innova) ', 'AB 1156 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689036_Picture5.jpg', '3020102003'),
+(7, 'Mini Bus (Avanza) ', 'AB 1163 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689128_Picture6.jpg', '3020102003'),
+(8, 'Mini Bus (Innova) ', 'AB 1160 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689391_Picture7.jpg', '3020102003'),
+(9, 'Mini Bus (Innova) ', 'AB II57 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689418_Picture8.jpg', '3020102003'),
+(10, 'Mini Bus (Innova) ', 'AB 1158 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689447_Picture9.jpg', '3020102003'),
+(11, 'Mini Bus (Innova) ', 'AB 1161 UH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689482_Picture10.jpg', '3020102003'),
+(12, 'Mini Bus (Innova) ', 'AB 1169 UH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689515_Picture11.jpg', '3020102003'),
+(13, 'Mini Bus (Alphard) ', 'AB 1168 ZZH', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689564_Picture13.jpg', '3020102003'),
+(14, 'Mini Bus (Innova) ', 'AB 1159 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763690349_Picture12.jpg', '3020102003'),
+(15, 'Pick Up Suzuki', 'AB 8611 IA', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689597_Picture14.jpg', '3020103002'),
+(16, 'Kendaraan Roda Tiga (Viar)', 'AB 3111 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689674_Picture15.jpg', '3020103008'),
+(17, 'Sepeda Motor Honda - NF', 'AB 2824 UH ', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689719_Picture16.jpg', '3020104001'),
+(18, 'Sepeda Motor Yamaha - UE11', 'AB 2211 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689792_Picture17.jpg', '3020104001'),
+(19, 'Sepeda Motor Yamaha - UE11', 'AB 2311 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689862_Picture18.jpg', '3020104001'),
+(20, 'Sepeda Motor Yamaha Lexi', 'AB 2511 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689906_Picture19.jpg', '3020104001'),
+(21, 'Sepeda Motor Yamaha Gear', 'AB 2411 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689937_Picture20.jpg', '3020104001'),
+(22, 'Sepeda Motor Yamaha Mio', 'AB 2611 IF', 'tersedia', 'Kendaraan Dinas Operasional', 'uploads/1763689960_Picture21.jpg', '3020104001');
 
 -- --------------------------------------------------------
 
@@ -97,17 +98,12 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `id_user`, `message`, `is_read`, `created_at`, `id_peminjaman`) VALUES
-(10, 8, 'Permintaan peminjaman Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_BA.2025_TI_7468.pdf', 1, '2025-11-26 04:58:41', NULL),
-(11, 2, 'Permintaan peminjaman kendaraan baru menunggu persetujuan.', 1, '2025-11-26 08:14:38', NULL),
-(12, 8, 'Permintaan peminjaman Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_BA.2025_TI_6332.pdf', 1, '2025-11-26 08:15:00', NULL),
-(13, 3, 'Permintaan peminjaman ruangan baru menunggu persetujuan.', 1, '2025-11-26 08:18:16', NULL),
-(14, 8, 'Permintaan peminjaman ruangan Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/BA_Ruangan_BA.2025_TI_3591.pdf', 1, '2025-11-26 14:48:03', NULL),
-(15, 2, 'Permintaan peminjaman kendaraan baru menunggu persetujuan.', 1, '2025-11-26 15:28:28', NULL),
-(16, 8, 'Permintaan peminjaman kendaraan Anda ditolak oleh admin.', 1, '2025-11-26 15:55:41', NULL),
-(17, 2, 'Permintaan peminjaman kendaraan baru menunggu persetujuan.', 1, '2025-11-26 16:11:27', NULL),
-(18, 8, 'Permintaan peminjaman Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_BA.2025_TI_2872.pdf', 1, '2025-11-26 16:12:07', NULL),
-(19, 2, 'Permintaan peminjaman kendaraan baru menunggu persetujuan.', 1, '2025-11-27 06:18:51', NULL),
-(20, 8, 'Permintaan peminjaman Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_BA.2025_TI_6441.pdf', 1, '2025-11-27 06:19:08', NULL);
+(178, 3, 'Permintaan peminjaman ruangan baru menunggu persetujuan.', 0, '2025-12-02 03:16:40', NULL),
+(179, 8, 'Permintaan peminjaman ruangan Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_Ruangan_01_BA-RUANG_XVIII.YOG.1.4_12_2025.pdf', 1, '2025-12-02 03:16:59', NULL),
+(180, 3, 'Pengajuan pengembalian ruangan (01/BA-RUANG/XVIII.YOG.1.4/12/2025) menunggu persetujuan Anda.', 0, '2025-12-02 03:18:52', 104),
+(181, 8, 'Pengembalian ruangan disetujui. ', 1, '2025-12-02 03:19:04', NULL),
+(182, 3, 'Pengajuan pengembalian ruangan (ADM-20251202-9937) menunggu persetujuan Anda.', 0, '2025-12-02 03:19:54', 105),
+(183, 8, 'Pengembalian ruangan disetujui. ', 0, '2025-12-02 03:20:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -123,23 +119,23 @@ CREATE TABLE `peminjaman` (
   `id_item` int(11) NOT NULL,
   `tanggal_pinjam` date DEFAULT NULL,
   `tanggal_kembali` date DEFAULT NULL,
-  `status` enum('pending_return','pending','approved','rejected','dipinjam','dikembalikan') DEFAULT 'pending',
+  `status` enum('pending','approved','rejected','dipinjam','dikembalikan') DEFAULT 'pending',
   `keterangan_user` text DEFAULT NULL,
   `lo` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `tanggal_kembali_aktual` date DEFAULT NULL
+  `tanggal_kembali_aktual` date DEFAULT NULL,
+  `tambah_fasilitas` text DEFAULT NULL,
+  `nama_manual` varchar(255) DEFAULT NULL,
+  `nip_manual` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `peminjaman`
 --
 
-INSERT INTO `peminjaman` (`id`, `kode_peminjaman`, `id_user`, `jenis`, `id_item`, `tanggal_pinjam`, `tanggal_kembali`, `status`, `keterangan_user`, `lo`, `created_at`, `tanggal_kembali_aktual`) VALUES
-(45, 'BA.2025/TI/6332', 8, 'kendaraan', 10, '2025-11-26', '2025-11-27', '', '', 'Admin Kendaraan', '2025-11-26 08:14:38', '2025-11-26'),
-(46, 'BA.2025/TI/3591', 8, 'ruangan', 5, '2025-11-26', '2025-11-29', '', 'tidak ada ', 'Admin Ruangan', '2025-11-26 08:18:16', '2025-11-26'),
-(47, NULL, 8, 'kendaraan', 6, '2025-11-26', '2025-11-27', 'rejected', NULL, 'Admin Kendaraan', '2025-11-26 15:28:28', NULL),
-(48, 'BA.2025/TI/2872', 8, 'kendaraan', 15, '2025-11-26', '2025-11-30', 'dipinjam', NULL, 'Admin Kendaraan', '2025-11-26 16:11:27', NULL),
-(49, 'BA.2025/TI/6441', 8, 'kendaraan', 2, '2025-11-27', '2025-11-29', 'dipinjam', NULL, 'Admin Kendaraan', '2025-11-27 06:18:51', NULL);
+INSERT INTO `peminjaman` (`id`, `kode_peminjaman`, `id_user`, `jenis`, `id_item`, `tanggal_pinjam`, `tanggal_kembali`, `status`, `keterangan_user`, `lo`, `created_at`, `tanggal_kembali_aktual`, `tambah_fasilitas`, `nama_manual`, `nip_manual`) VALUES
+(104, '01/BA-RUANG/XVIII.YOG.1.4/12/2025', 8, 'ruangan', 5, '2025-12-02', '2025-12-04', 'dikembalikan', '-', 'Admin Ruangan', '2025-12-02 03:16:40', '2025-12-02', '-', NULL, NULL),
+(105, 'ADM-20251202-9937', 8, 'ruangan', 3, '2025-12-05', '2025-12-08', 'dikembalikan', '-', NULL, '2025-12-02 03:19:35', '2025-12-02', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -178,11 +174,11 @@ CREATE TABLE `ruangan` (
 --
 
 INSERT INTO `ruangan` (`id`, `nama_ruangan`, `lokasi`, `kapasitas`, `status`, `keterangan`, `foto`) VALUES
-(2, 'Ruang Krapyak', 'Lantai 1', 20, 'tersedia', 'Rapat kecil/diskusi, terdapat Meja, Kursi, TV, dan AC', ''),
-(3, 'Ruang Kotagede', 'Lantai 1', 30, 'tersedia', 'Ruang VIP, terdapat kursi, TV display, dan AC', ''),
-(4, 'Ruang Golong Gilig', 'Lantai 2', 15, 'tersedia', 'Ruang koordinasi/rapat, terdapat meja rapat, kursi, dan layar presentasi', ''),
-(5, 'Auditorium', 'Lantai 1,5', 150, 'dipinjam', 'Seminar/acara, terdapat panggung, sound system, layar dan proyektor', ''),
-(6, 'Ruang Merapi', 'Lantai 4', 40, 'tersedia', 'Rapat/diskusi, terdapat proyektor, whiteboard, dan AC', ''),
+(2, 'Ruang Krapyak', 'Lantai 1', 20, 'tersedia', 'Rapat kecil/diskusi, terdapat Meja, Kursi, TV, dan AC', 'uploads/ruangan/1764259583_Ruang Panggung Krapyak.png'),
+(3, 'Ruang Kotagede', 'Lantai 1', 30, 'tersedia', 'Ruang VIP, terdapat kursi, TV display, dan AC', 'uploads/ruangan/1764259572_Ruang Kota Gede.png'),
+(4, 'Ruang Golong Gilig', 'Lantai 2', 15, 'tersedia', 'Ruang koordinasi/rapat, terdapat meja rapat, kursi, dan layar presentasi', 'uploads/ruangan/1764259557_Ruang Golong Gilig.png'),
+(5, 'Auditorium', 'Lantai 1,5', 150, 'tersedia', 'Seminar/acara, terdapat panggung, sound system, layar dan proyektor', 'uploads/ruangan/1764259531_Ruang Auditorium.png'),
+(6, 'Ruang Merapi', 'Lantai 4', 40, 'tersedia', 'Rapat/diskusi, terdapat proyektor, whiteboard, dan AC', 'uploads/ruangan/1764259598_Ruang Merapi.png'),
 (7, 'Ruang Pasca Karya', 'Lantai 1', 25, 'tersedia', 'Kegiatan organisasi/pelatihan/diskusi, terdapat meja, kursi, AC, dan PC Dekstop', ''),
 (8, 'Ruang Dharma Wanita', 'Lantai 1', 50, 'tersedia', 'Kegiatan organisasi/pelatihan/diskusi, terdapat meja, kursi, AC, dan PC Dekstop', '');
 
@@ -210,7 +206,7 @@ INSERT INTO `user` (`id`, `nama`, `username`, `password`, `role`, `created_at`, 
 (1, 'Super Admin', 'superadmin', '$2y$10$XazBAdTImHl5GeBNIyjrfOngrk3TPF6G0SsL9spRjAjPkxasNhXAS', 'super_admin', '2025-11-04 02:53:32', NULL),
 (2, 'Admin Kendaraan', 'adminkendaraan', '$2y$10$3EcWDTiWVkW2eVntaVBjf.aJUqRUcQNMJITZrwq3I7PSKwCdACWXe', 'admin_kendaraan', '2025-11-04 02:53:32', NULL),
 (3, 'Admin Ruangan', 'adminruangan', '$2y$10$9yGj3rwNw9qNWO/tXXh9KeWs.IiKFGdJzvmEJAPBGY3cSBIlQPw5m', 'admin_ruangan', '2025-11-04 02:53:32', NULL),
-(6, 'synthia', 'sisyn', '$2y$10$/zMpzByNQpFpW1.C8QC4juA6tYgupIyoi2me0srNXAnOkcm0lMC9S', 'user', '2025-11-13 06:12:05', NULL),
+(6, 'sinti', 'sisyn', '$2y$10$/zMpzByNQpFpW1.C8QC4juA6tYgupIyoi2me0srNXAnOkcm0lMC9S', 'user', '2025-11-13 06:12:05', NULL),
 (8, 'sin', 'sisin', '$2y$10$5xbZNAUNEjbjovu2yzxVU.vPJbk7JIB.YYaUC0Ra7BgOcvCNGKOsy', 'user', '2025-11-21 02:57:38', '040104');
 
 --
@@ -286,13 +282,13 @@ ALTER TABLE `kendaraan`
 -- AUTO_INCREMENT untuk tabel `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT untuk tabel `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT untuk tabel `pengembalian`

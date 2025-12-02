@@ -190,6 +190,13 @@ include("../../includes/navbar.php");
     border-radius: 12px;
     font-size: 0.9em;
 }
+.status-label.tolak {
+    background-color: #454544ff;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+} 
 
 .card h5 {
   color: #5a4722;

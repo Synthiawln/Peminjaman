@@ -25,6 +25,8 @@ $id_item          = $_POST['id_item'];
 $jenis            = $_POST['jenis'];
 $tgl_pinjam       = $_POST['tgl_pinjam'];
 $tgl_kembali      = $_POST['tgl_kembali'];
+$tambah_fasilitas = isset($_POST['tambah_fasilitas']) ? trim($_POST['tambah_fasilitas']) : '';
+
 
 $penanggung_jawab = '';
 $admin_to_notify = null;
@@ -92,11 +94,11 @@ try {
 
 $stmt_in = $con->prepare(
     "INSERT INTO peminjaman
-    (kode_peminjaman, id_user, jenis, id_item, tanggal_pinjam, tanggal_kembali, lo, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    (kode_peminjaman, id_user, jenis, id_item, tanggal_pinjam, tanggal_kembali, lo, status, tambah_fasilitas)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 );
 
-$stmt_in->bind_param("sisissss",
+$stmt_in->bind_param("sisisssss",
     $nomor_ba,
     $id_user,
     $jenis,
@@ -104,7 +106,8 @@ $stmt_in->bind_param("sisissss",
     $tgl_pinjam,
     $tgl_kembali,
     $penanggung_jawab,
-    $status_to_insert
+    $status_to_insert,
+    $tambah_fasilitas
 );
 
 $stmt_in->execute();

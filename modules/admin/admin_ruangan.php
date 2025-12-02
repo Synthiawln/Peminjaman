@@ -114,7 +114,8 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                 <div class="alert alert-success"><?= $success ?></div>
             <?php endif; ?>
             <form method="POST">
-                <div class="row">
+                <div class="row g-3">
+
                     <div class="col-md-3">
                         <label for="id_user" class="form-label">Pilih User</label>
                         <select class="form-select" id="id_user" name="id_user" required>
@@ -126,6 +127,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
+
                     <div class="col-md-3">
                         <label for="id_ruangan" class="form-label">Pilih Ruangan</label>
                         <select class="form-select" id="id_ruangan" name="id_ruangan" required>
@@ -137,23 +139,30 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-3">
                         <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
                         <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam" required min="<?= $minDate ?>">
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-3">
                         <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
                         <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required min="<?= $minDate ?>">
                     </div>
-                    <div class="col-md-2">
-                        <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
-                        <textarea class="form-control" id="keterangan" name="keterangan" rows="1"></textarea>
+
+                    <!-- Textarea full width -->
+                    <div class="col-12">
+                        <label for="tambah_fasilitas" class="form-label">Permintaan Kelengkapan Sarana/Prasarana (Opsional)</label>
+                        <textarea class="form-control" id="tambah_fasilitas" name="tambah_fasilitas" rows="2"></textarea>
                     </div>
+
                 </div>
+
                 <div class="mt-3">
                     <button type="submit" name="pinjamkan_ruangan" class="btn btn-primary">Pinjamkan Ruangan</button>
                 </div>
             </form>
+
         </div>
     </div>
 
@@ -233,7 +242,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
 
     <!-- Permintaan pending -->
     <div class="row">
-    <div class="col-lg-6 mb-5">
+    <div class="col-lg-12 mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #746616cf;">
             <i class="bi bi-hourglass-split me-2"></i>
             <span>Permintaan Peminjaman Ruangan (Menunggu Persetujuan)</span>
@@ -250,6 +259,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                         <th>Ruangan</th>
                         <th>Tgl Pinjam</th>
                         <th>Tgl Kembali</th>
+                        <th>Fasilitas tambahan</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -261,6 +271,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                             <td><?= htmlspecialchars($p['nama_ruangan']) ?></td>
                             <td><?= htmlspecialchars($p['tanggal_pinjam']) ?></td>
                             <td><?= htmlspecialchars($p['tanggal_kembali']) ?></td>
+                            <td><?= htmlspecialchars($p['tambah_fasilitas']) ?></td>
                             <td class="text-center">
                                 <a href="approve_ruangan.php?id=<?= $p['id'] ?>&action=approve" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan ini?')">Setujui</a>
                                 <a href="approve_ruangan.php?id=<?= $p['id'] ?>&action=reject" class="btn btn-sm btn-danger" onclick="return confirm('Tolak permintaan ini?')">Tolak</a>
@@ -272,7 +283,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <div class="col-lg-6 mb-5">
+    <div class="col-lg-12 mb-5">
         <div class="card-header text-white d-flex align-items-center" style="background-color: #5e4c2e;">
             <i class="bi bi-reply-all me-2"></i>
             <span>Permintaan Pengembalian Ruangan (Menunggu Persetujuan)</span>
@@ -477,6 +488,22 @@ new Chart(ctxLineMinggu, {
         plugins: { legend: { display: true } }
     }
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const tglPinjam = document.getElementById("tanggal_pinjam");
+    const tglKembali = document.getElementById("tanggal_kembali");
+
+    // Biar saat field diklik langsung buka kalender
+    if (tglPinjam && tglPinjam.showPicker) {
+        tglPinjam.addEventListener("focus", () => tglPinjam.showPicker());
+        tglPinjam.addEventListener("click", () => tglPinjam.showPicker());
+    }
+
+    if (tglKembali && tglKembali.showPicker) {
+        tglKembali.addEventListener("focus", () => tglKembali.showPicker());
+        tglKembali.addEventListener("click", () => tglKembali.showPicker());
+    }
+});
 </script>
 <style>
 
@@ -509,6 +536,13 @@ new Chart(ctxLineMinggu, {
 
 .status-label.pinjam {
     background-color: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+} 
+.status-label.tolak {
+    background-color: #454544ff;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;
