@@ -112,6 +112,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
             <?php if (isset($success)): ?>
                 <div class="alert alert-success"><?= $success ?></div>
             <?php endif; ?>
+            
             <form method="POST">
                 
                 <div class="row g-3">
@@ -425,6 +426,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                         <th>Tanggal Pinjam</th>
                         <th>Tanggal Kembali</th>
                         <th>Status</th>
+                        <th>Aksi Khusus Admin</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -444,6 +446,10 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                                 <?php else: ?>
                                     <span class="status-label kembali">Sudah Dikembalikan</span>
                                 <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="generate_admin.php?id=<?= $row['id'] ?>&jenis=kendaraan" class="btn btn-sm btn-primary" target="_blank">Kirim BA</a>
+
                             </td>
                         </tr>
                     <?php endwhile; ?>

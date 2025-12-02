@@ -163,56 +163,84 @@ if ($_SESSION['role'] == 'admin_ruangan') {
     </div>
     <?php endif; ?>
 
-    <!-- =================================================Kendaraan============================================= -->
-        <?php if ($_SESSION['role'] == 'admin_kendaraan' && $qKendaraan): ?>
-            <?php
-            // Handle filter pencarian
-            $search = isset($_GET['search_kendaraan']) ? trim($_GET['search_kendaraan']) : '';
-
-            // Query laporan dengan filter
-            $queryKendaraan = "
-            SELECT 
-            YEAR(p.tanggal_pinjam) AS tahun, 
-            MONTH(p.tanggal_pinjam) AS bulan, 
-            k.nama_kendaraan, 
-            k.no_polisi, 
-            COUNT(*) AS total 
-        FROM peminjaman p 
-        JOIN kendaraan k ON p.id_item = k.id 
-        WHERE p.jenis = 'kendaraan'
-    ";
-
-    if (!empty($search)) {
-    $queryKendaraan .= " AND k.nama_kendaraan LIKE '%" . $con->real_escape_string($search) . "%'";
-    }
-
-    $queryKendaraan .= " GROUP BY tahun, bulan, k.id ORDER BY tahun DESC, bulan DESC";
-
-    $qKendaraan = $con->query($queryKendaraan);
-
-    // ... (lanjutkan dengan kode dashboard lainnya)
-    ?>
-
-    <!-- Di bagian tempat tabel laporan ditampilkan -->
+    <!-- ====================================================================Kendaraan==================================================================== -->
     <?php if ($_SESSION['role'] == 'admin_kendaraan' && $qKendaraan): ?>
-    <div class="card shadow-sm rounded-4">
+    <?php
+// Handle filter pencarian
+$search = isset($_GET['search_kendaraan']) ? trim($_GET['search_kendaraan']) : '';
+
+// Query laporan dengan filter
+$queryKendaraan = "
+    SELECT 
+        YEAR(p.tanggal_pinjam) AS tahun, 
+        MONTH(p.tanggal_pinjam) AS bulan, 
+        k.nama_kendaraan, 
+        p.tanggal_pinjam,
+        k.no_polisi,
+        COUNT(*) AS total,
+        GROUP_CONCAT(u.nama SEPARATOR ', ') AS daftar_user
+    FROM peminjaman p
+    JOIN kendaraan k ON p.id_item = k.id
+    JOIN user u ON p.id_user = u.id
+    WHERE p.jenis = 'kendaraan'
+";
+
+// ================================
+// Tambahkan filter pencarian
+// Bisa cari:
+// - nama kendaraan
+// - nomor polisi
+// - nama peminjam
+// ================================
+if (!empty($search)) {
+    $safe = $con->real_escape_string($search);
+    $queryKendaraan .= "
+        AND (
+            k.nama_kendaraan LIKE '%$safe%' OR
+            k.no_polisi LIKE '%$safe%' OR
+            u.nama LIKE '%$safe%'
+        )
+    ";
+}
+
+$queryKendaraan .= "
+    GROUP BY tahun, bulan, k.id
+    ORDER BY tahun DESC, bulan DESC
+";
+
+$qKendaraan = $con->query($queryKendaraan);
+?>
+
+
+    <!-- Bagian tabel laporan -->
+    <div class="card shadow-sm rounded-4 mt-3">
         <div class="card-body">
-            <h5 class="card-title">🚗 Laporan Peminjaman Kendaraan per Bulan</h5>
-            <p class="text-muted">Menampilkan nama kendaraan dan jumlah peminjaman tiap bulan.</p>
+            <h5 class="card-title">🚗 Laporan Peminjaman Kendaraan</h5>
+            <p class="text-muted">Menampilkan nama kendaraan, jumlah peminjaman, dan siapa saja yang meminjam pada bulan tersebut.</p>
             
-            <!-- Form Filter Pencarian -->
             <form method="GET" class="mb-3 d-flex align-items-center">
-                <label for="search_kendaraan" class="form-label me-2 mb-0">Cari Nama Kendaraan:</label>
-                <input type="text" class="form-control me-2" id="search_kendaraan" name="search_kendaraan" value="<?= htmlspecialchars($search) ?>" placeholder="Masukkan nama kendaraan..." style="max-width: 300px;">
+                <label for="search_kendaraan" class="form-label me-2 mb-0">
+                    Cari Data:
+                </label>
+
+                <input type="text" class="form-control me-2" id="search_kendaraan" 
+                    name="search_kendaraan"
+                    value="<?= htmlspecialchars($search) ?>" 
+                    placeholder="Nama kendaraan / Nopol / Peminjam..." 
+                    style="max-width: 320px;">
+
                 <button type="submit" class="btn btn-primary me-2">Cari</button>
                 <a href="?search_kendaraan=" class="btn btn-secondary">Reset</a>
             </form>
+
             
             <table id="laporanKendaraanTable" class="table table-striped table-bordered align-middle">
                 <thead class="table-dark">
                     <tr>
+                        <th>Nama User</th>
                         <th>Tahun</th>
                         <th>Bulan</th>
+                        <th>Tanggal Pinjam</th>
                         <th>Nama Kendaraan</th>
                         <th>No Polisi</th>
                         <th>Jumlah Peminjaman</th>
@@ -221,8 +249,10 @@ if ($_SESSION['role'] == 'admin_ruangan') {
                 <tbody>
                     <?php while ($row = $qKendaraan->fetch_assoc()): ?>
                         <tr>
+                            <td><?= htmlspecialchars($row['daftar_user']) ?></td>
                             <td><?= htmlspecialchars($row['tahun']) ?></td>
                             <td><?= htmlspecialchars($row['bulan']) ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_pinjam']) ?></td>
                             <td><?= htmlspecialchars($row['nama_kendaraan']) ?></td>
                             <td><?= htmlspecialchars($row['no_polisi']) ?></td>
                             <td><?= htmlspecialchars($row['total']) ?></td>
@@ -232,58 +262,72 @@ if ($_SESSION['role'] == 'admin_ruangan') {
             </table>
         </div>
     </div>
-    <?php endif; ?>
-    <?php endif; ?>
-    <!-- =======================================================Ruangan============================================= -->
-        <?php if ($_SESSION['role'] == 'admin_ruangan' && $qRuangan): ?>
-            <?php
-            // Handle filter pencarian
-            $search = isset($_GET['search_ruangan']) ? trim($_GET['search_ruangan']) : '';
 
-            // Query laporan dengan filter
-            $queryRuangan = "
-            SELECT 
+<?php endif; ?>
+
+    <!-- ====================================================================Ruangan==================================================================== -->
+       <?php if ($_SESSION['role'] == 'admin_ruangan' && $qRuangan): ?>
+    <?php
+    // Handle filter pencarian
+    $search = isset($_GET['search_ruangan']) ? trim($_GET['search_ruangan']) : '';
+
+    // Query laporan dengan filter
+    $queryRuangan = "
+        SELECT 
             YEAR(p.tanggal_pinjam) AS tahun, 
             MONTH(p.tanggal_pinjam) AS bulan, 
-            r.nama_ruangan, 
-            r.lokasi, 
-            COUNT(*) AS total 
+            r.nama_ruangan, p.tanggal_pinjam,
+            r.lokasi,
+            COUNT(*) AS total,
+            GROUP_CONCAT(u.nama SEPARATOR ', ') AS daftar_user
         FROM peminjaman p 
         JOIN ruangan r ON p.id_item = r.id 
+        JOIN user u ON p.id_user = u.id
         WHERE p.jenis = 'ruangan'
     ";
 
     if (!empty($search)) {
-    $queryRuangan .= " AND r.nama_ruangan LIKE '%" . $con->real_escape_string($search) . "%'";
+        $queryRuangan .= " AND r.nama_ruangan LIKE '%" . $con->real_escape_string($search) . "%'";
     }
 
-    $queryRuangan .= " GROUP BY tahun, bulan, r.id ORDER BY tahun DESC, bulan DESC";
+    $queryRuangan .= "
+        GROUP BY tahun, bulan, r.id
+        ORDER BY tahun DESC, bulan DESC
+    ";
 
     $qRuangan = $con->query($queryRuangan);
-
-    // ... (lanjutkan dengan kode dashboard lainnya)
     ?>
 
-    <!-- Di bagian tempat tabel laporan ditampilkan -->
-    <?php if ($_SESSION['role'] == 'admin_ruangan' && $qRuangan): ?>
+    <!-- Di bagian tabel laporan -->
     <div class="card shadow-sm rounded-4">
         <div class="card-body">
-            <h5 class="card-title">🚗 Laporan Peminjaman Ruangan per Bulan</h5>
-            <p class="text-muted">Menampilkan nama Ruangan dan jumlah peminjaman tiap bulan.</p>
+            <h5 class="card-title">📌 Laporan Peminjaman Ruangan</h5>
+            <p class="text-muted">Menampilkan ruangan, lokasi, jumlah peminjaman, dan pengguna yang meminjam tiap bulan.</p>
             
             <!-- Form Filter Pencarian -->
             <form method="GET" class="mb-3 d-flex align-items-center">
-                <label for="search_ruangan" class="form-label me-2 mb-0">Cari Nama Ruangan:</label>
-                <input type="text" class="form-control me-2" id="search_ruangan" name="search_ruangan" value="<?= htmlspecialchars($search) ?>" placeholder="Masukkan nama ruangan..." style="max-width: 300px;">
+                <label for="search_kendaraan" class="form-label me-2 mb-0">
+                    Cari Data:
+                </label>
+
+                <input type="text" class="form-control me-2" id="search_kendaraan" 
+                    name="search_kendaraan"
+                    value="<?= htmlspecialchars($search) ?>" 
+                    placeholder="Nama kendaraan / Nopol / Peminjam..." 
+                    style="max-width: 320px;">
+
                 <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="?search_ruangan=" class="btn btn-secondary">Reset</a>
+                <a href="?search_kendaraan=" class="btn btn-secondary">Reset</a>
             </form>
+
             
             <table id="laporanRuanganTable" class="table table-striped table-bordered align-middle">
                 <thead class="table-dark">
                     <tr>
+                        <th>Nama User</th>
                         <th>Tahun</th>
                         <th>Bulan</th>
+                        <th>Tanggal Pinjam</th>
                         <th>Nama Ruangan</th>
                         <th>Lokasi</th>
                         <th>Jumlah Peminjaman</th>
@@ -292,8 +336,10 @@ if ($_SESSION['role'] == 'admin_ruangan') {
                 <tbody>
                     <?php while ($row = $qRuangan->fetch_assoc()): ?>
                         <tr>
+                            <td><?= htmlspecialchars($row['daftar_user']) ?></td>
                             <td><?= htmlspecialchars($row['tahun']) ?></td>
                             <td><?= htmlspecialchars($row['bulan']) ?></td>
+                            <td><?= htmlspecialchars($row['tanggal_pinjam']) ?></td>
                             <td><?= htmlspecialchars($row['nama_ruangan']) ?></td>
                             <td><?= htmlspecialchars($row['lokasi']) ?></td>
                             <td><?= htmlspecialchars($row['total']) ?></td>
@@ -303,8 +349,8 @@ if ($_SESSION['role'] == 'admin_ruangan') {
             </table>
         </div>
     </div>
-    <?php endif; ?>
-    <?php endif; ?>
+<?php endif; ?>
+
 </div>
 
 

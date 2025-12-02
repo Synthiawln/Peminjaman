@@ -9,7 +9,41 @@ if (!isset($_SESSION['username'])) {
 
 $id_item = $_GET['id'];
 $jenis = $_GET['jenis']; 
-$minDate = date('Y-m-d'); 
+$minDate = date('Y-m-d');
+
+$id = (int)$_GET['id'];
+$jenis = $_GET['jenis'] ?? ''; 
+
+
+if ($jenis === 'ruangan') {
+    $stmt = $con->prepare("SELECT *, 'ruangan' AS jenis FROM ruangan WHERE id = ?");
+} elseif ($jenis === 'kendaraan') {
+    $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
+} else {
+    
+    $stmt = $con->prepare("SELECT *, 'kendaraan' AS jenis FROM kendaraan WHERE id = ?");
+}
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$res = $stmt->get_result();
+
+if ($res->num_rows === 0) {
+    echo "<h4>Item tidak ditemukan.</h4>";
+    exit();
+}
+
+$item = $res->fetch_assoc();
+$jenis = $item['jenis']; 
+
+$file = $item['foto'] ?? '';
+$fotoPath = "../" . $file; 
+
+
+if (empty($file) || !file_exists($fotoPath)) {
+    $fotoPath = "../uploads/no-image.png"; 
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -23,10 +57,19 @@ $minDate = date('Y-m-d');
 <div class="container mt-5">
   <div class="card p-4 shadow-lg rounded-3">
     <h3 class="text-center mb-4">Form Peminjaman <?= ucfirst($jenis) ?></h3>
+      <img src="<?= htmlspecialchars($fotoPath) ?>" class="detail-img" alt="Foto <?= htmlspecialchars($jenis) ?>">
 
     <form action="pinjam_proses.php" method="POST">
       <input type="hidden" name="id_item" value="<?= htmlspecialchars($id_item) ?>">
       <input type="hidden" name="jenis" value="<?= htmlspecialchars($jenis) ?>">
+    
+       <?php if ($jenis === 'ruangan'): ?>
+                        <p><strong>Nama:</strong> <?= htmlspecialchars($item['nama_ruangan']) ?> orang</p>
+                        <p><strong>Kapasitas:</strong> <?= htmlspecialchars($item['kapasitas'] ?? '-') ?></p>
+                    <?php else: ?>
+                        <p><strong>Nama:</strong> <?= htmlspecialchars($item['nama_kendaraan']) ?></p>
+                        <p><strong>No. Polisi:</strong> <?= htmlspecialchars($item['no_polisi']) ?></p>
+                    <?php endif; ?>
 
       <div class="mb-3">
         <label class="form-label">Tanggal Pinjam</label>
@@ -80,6 +123,16 @@ $minDate = date('Y-m-d');
         }, 500);
     });
   </script>
+  <style>
+    .detail-img {
+            width: 50%;
+            height: 350px;
+            object-fit: cover;
+            border-bottom: 3px solid #d0b84c;
 
+            display: block;     /* biar bisa di-auto margin */
+            margin: 0 auto;     /* ini yang bikin ke tengah */
+        }
+  </style>
 </body>
 </html>
