@@ -166,21 +166,30 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
         </div>
     </div>
 
-    <div class="container mt-4"><p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
-        <div class="row text-center mb-4 g-4">
-            <div class="col-md-3">
-                <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100">
+    <div class="container mt-4">
+    <p class="text-muted">Kelola data peminjaman dan kendaraan.</p>
+
+    <div class="row text-center mb-4 g-4">
+
+        <!-- TOTAL KENDARAAN -->
+        <div class="col-md-3">
+            <a href="detail_kendaraan.php" class="text-decoration-none">
+                <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100 position-relative card-hover">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
-                        <h4><?= $totalKendaraan; ?></h4>
-                        <p class = "mb-0">Total Kendaraan</p>
+                            <h4><?= $totalKendaraan; ?></h4>
+                            <p class="mb-0">Total Kendaraan</p>
                         </div>
                     </div>
-                        <i class="bi bi-truck fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
-                    </div>
+                    <i class="bi bi-truck fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                 </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100">
+            </a>
+        </div>
+
+        <!-- KENDARAAN DIPINJAM -->
+        <div class="col-md-3">
+            <a href="detail_kendaraan.php?filter=dipinjam" class="text-decoration-none">
+                <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100 position-relative card-hover">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
                             <h4><?= $kendaraanDipinjam; ?></h4>
@@ -189,19 +198,27 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                     </div>
                     <i class="bi bi-arrow-repeat fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-primary shadow-sm border-0 rounded-4 h-100">
+            </a>
+        </div>
+
+        <!-- KENDARAAN TERSEDIA -->
+        <div class="col-md-3">
+            <a href="detail_kendaraan.php?filter=tersedia" class="text-decoration-none">
+                <div class="card text-white bg-primary shadow-sm border-0 rounded-4 h-100 position-relative card-hover">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
-                        <h4><?= $kendaraanTersedia; ?></h4>
-                        <p>Kendaraan Tersedia</p>
+                            <h4><?= $kendaraanTersedia; ?></h4>
+                            <p class="mb-0">Kendaraan Tersedia</p>
                         </div>
                     </div>
                     <i class="bi bi-car-front-fill fs-1 opacity-75 position-absolute bottom-0 end-0 m-3"></i>
                 </div>
-            </div>
+            </a>
         </div>
+
+    </div>
+
+
 
    
         <div class="row mb-4 g-4">
@@ -448,7 +465,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="generate_admin.php?id=<?= $row['id'] ?>&jenis=kendaraan" class="btn btn-sm btn-primary" target="_blank">Kirim BA</a>
+                                <a href="generate_admin.php?id=<?= $row['id'] ?>&jenis=kendaraan" class="btn btn-sm btn-primary">Kirim BA</a>
 
                             </td>
                         </tr>

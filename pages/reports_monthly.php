@@ -34,19 +34,22 @@ $q = $con->query("
 
 // ------------------------ LAPORAN SUPER ADMIN ----------------------------
 
-$qJenis = null;
-if ($_SESSION['role'] == 'super_admin') {
-    $qJenis = $con->query("
-        SELECT 
-            YEAR(tanggal_pinjam) AS tahun,
-            MONTHNAME(tanggal_pinjam) AS bulan,
-            jenis,
-            COUNT(*) AS total
-        FROM peminjaman
-        GROUP BY tahun, MONTH(tanggal_pinjam), jenis
-        ORDER BY tahun DESC, MONTH(tanggal_pinjam) DESC
-    ");
-}
+$qJenis = $con->query("
+    SELECT 
+        YEAR(p.tanggal_pinjam) AS tahun,
+        MONTHNAME(p.tanggal_pinjam) AS bulan,
+        p.jenis,
+        COALESCE(k.nama_kendaraan, r.nama_ruangan) AS nama_item,
+        GROUP_CONCAT(DISTINCT u.nama SEPARATOR ', ') AS nama_user,
+        COUNT(*) AS total
+    FROM peminjaman p
+    LEFT JOIN kendaraan k ON p.id_item = k.id AND p.jenis = 'kendaraan'
+    LEFT JOIN ruangan r ON p.id_item = r.id AND p.jenis = 'ruangan'
+    JOIN user u ON p.id_user = u.id
+    GROUP BY tahun, MONTH(p.tanggal_pinjam), p.jenis, p.id_item
+    ORDER BY tahun DESC, MONTH(p.tanggal_pinjam) DESC
+");
+
 
 // ------------------------ LAPORAN KENDARAAN ----------------------------
 
@@ -180,18 +183,23 @@ if ($_SESSION['role'] == 'admin_ruangan') {
             <table id="laporanJenisTable" class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <th>Tahun</th>
-                        <th>Bulan</th>
-                        <th>Jenis</th>
-                        <th>Jumlah</th>
+                    <th>Tahun</th>
+                    <th>Bulan</th>
+                    <th>Jenis</th>
+                    <th>Nama Kendaraan / Ruangan</th>
+                    <th>User Peminjam</th>
+                    <th>Total</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php while ($row = $qJenis->fetch_assoc()): ?>
                         <tr>
                             <td><?= $row['tahun'] ?></td>
                             <td><?= $row['bulan'] ?></td>
                             <td><?= ucfirst($row['jenis']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_item']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_user']) ?></td>
                             <td><?= $row['total'] ?></td>
                         </tr>
                     <?php endwhile; ?>

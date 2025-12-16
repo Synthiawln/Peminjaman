@@ -21,7 +21,11 @@ $res = $stmt->get_result();
 
 <div class="container mt-4">
     <h3 class="mb-4">Katalog Kendaraan</h3>
-
+    <div class="mb-3">
+    <a href="../index.php" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+    </div>
     <div class="row">
         <?php if ($res->num_rows > 0): ?>
             <?php while ($r = $res->fetch_assoc()): ?>

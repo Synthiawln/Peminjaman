@@ -56,6 +56,11 @@ if (empty($file) || !file_exists($fotoPath)) {
 <body class="bg-light">
 <div class="container mt-5">
   <div class="card p-4 shadow-lg rounded-3">
+    <div class="mb-3">
+    <a href="../index.php" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+    </div>
     <h3 class="text-center mb-4">Form Peminjaman <?= ucfirst($jenis) ?></h3>
       <img src="<?= htmlspecialchars($fotoPath) ?>" class="detail-img" alt="Foto <?= htmlspecialchars($jenis) ?>">
 

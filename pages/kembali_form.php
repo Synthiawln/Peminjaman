@@ -74,7 +74,11 @@ if ($id_peminjaman) {
 <div class="container mt-5">
   <div class="card p-4 shadow-lg rounded-4">
     <h3 class="text-center mb-4">Form Pengembalian</h3>
-
+    <div class="mb-3">
+    <a href="../index.php" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+    </div>
     <?php if (isset($peminjaman)): ?>
 
       <form action="kembali_proses_secure.php" method="POST">

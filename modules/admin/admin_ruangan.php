@@ -173,43 +173,55 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
    
 <div class="row text-center mb-4 g-4">
     
+   <div class="row g-4">
+
+    <!-- TOTAL RUANGAN -->
     <div class="col-md-3">
-        <div class="card text-white bg-danger shadow-sm border-0 rounded-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="fw-bold mb-0"><?= $totalRuangan; ?></h4>
-                    <p class="mb-0">Total Ruangan</p>
+        <a href="detail_ruangan.php?filter=all" class="text-decoration-none">
+            <div class="card text-white bg-danger shadow-sm border-0 rounded-4 h-100 card-hover">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-0"><?= $totalRuangan; ?></h4>
+                        <p class="mb-0">Total Ruangan</p>
+                    </div>
+                    <i class="bi bi-building fs-1 opacity-75"></i>
                 </div>
-                <i class="bi bi-building fs-1 opacity-75"></i>
             </div>
-        </div>
+        </a>
     </div>
 
-   
+    <!-- RUANGAN DIPINJAM -->
     <div class="col-md-3">
-        <div class="card text-white bg-success shadow-sm border-0 rounded-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="fw-bold mb-0"><?= $ruanganDipinjam; ?></h4>
-                    <p class="mb-0">Ruangan Dipinjam</p>
+        <a href="detail_ruangan.php?filter=dipinjam" class="text-decoration-none">
+            <div class="card text-white bg-success shadow-sm border-0 rounded-4 h-100 card-hover">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-0"><?= $ruanganDipinjam; ?></h4>
+                        <p class="mb-0">Ruangan Dipinjam</p>
+                    </div>
+                    <i class="bi bi-door-open-fill fs-1 opacity-75"></i>
                 </div>
-                <i class="bi bi-door-open-fill fs-1 opacity-75"></i>
             </div>
-        </div>
+        </a>
     </div>
 
-   
+    <!-- RUANGAN TERSEDIA -->
     <div class="col-md-3">
-        <div class="card text-white bg-primary shadow-sm border-0 rounded-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="fw-bold mb-0"><?= $ruanganTersedia; ?></h4>
-                    <p class="mb-0">Ruangan Tersedia</p>
+        <a href="detail_ruangan.php?filter=tersedia" class="text-decoration-none">
+            <div class="card text-white bg-primary shadow-sm border-0 rounded-4 h-100 card-hover">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-0"><?= $ruanganTersedia; ?></h4>
+                        <p class="mb-0">Ruangan Tersedia</p>
+                    </div>
+                    <i class="bi bi-door-closed-fill fs-1 opacity-75"></i>
                 </div>
-                <i class="bi bi-door-closed-fill fs-1 opacity-75"></i>
             </div>
-        </div>
+        </a>
     </div>
+
+</div>
+
 </div>
 
 
@@ -438,7 +450,7 @@ while ($row = $peminjamanPerMinggu->fetch_assoc()) {
                                 <?php endif; ?>
                             </td>
                             <td>
-                               <a href="generate_admin.php?id=<?= $row['id'] ?>&jenis=ruangan" class="btn btn-sm btn-primary" target="_blank">Kirim BA</a>
+                               <a href="generate_admin.php?id=<?= $row['id'] ?>&jenis=ruangan" class="btn btn-sm btn-primary">Kirim BA</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>

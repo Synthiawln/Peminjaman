@@ -36,21 +36,29 @@ $q = $con->query("
 ");
 
 
-$qJenis = null;
+$qWeeklyDetail = null;
 if ($_SESSION['role'] == 'super_admin') {
-    $qJenis = $con->query("
+    $qWeeklyDetail = $con->query("
         SELECT 
-            YEAR(tanggal_pinjam) AS tahun,
-            WEEK(tanggal_pinjam, 1) AS minggu_ke,
-            jenis,
-            MIN(tanggal_pinjam) AS tanggal_awal,
-            MAX(tanggal_pinjam) AS tanggal_akhir,
+            YEAR(p.tanggal_pinjam) AS tahun,
+            WEEK(p.tanggal_pinjam, 1) AS minggu_ke,
+            MIN(p.tanggal_pinjam) AS tanggal_awal,
+            MAX(p.tanggal_pinjam) AS tanggal_akhir,
+            p.jenis,
+            COALESCE(k.nama_kendaraan, r.nama_ruangan) AS nama_item,
+            GROUP_CONCAT(DISTINCT u.nama SEPARATOR ', ') AS daftar_user,
             COUNT(*) AS total
-        FROM peminjaman
-        GROUP BY tahun, minggu_ke, jenis
+        FROM peminjaman p
+        LEFT JOIN kendaraan k 
+            ON p.id_item = k.id AND p.jenis = 'kendaraan'
+        LEFT JOIN ruangan r 
+            ON p.id_item = r.id AND p.jenis = 'ruangan'
+        JOIN user u ON p.id_user = u.id
+        GROUP BY tahun, minggu_ke, p.jenis, p.id_item
         ORDER BY tahun DESC, minggu_ke DESC
     ");
 }
+
 
 $qKendaraan = null;
 if ($_SESSION['role'] == 'admin_kendaraan') {
@@ -129,39 +137,47 @@ if ($_SESSION['role'] == 'admin_ruangan') {
         </div>
     </div>
     <!-- =================================================Super Admin============================================= -->
-    <?php if ($_SESSION['role'] == 'super_admin' && $qJenis): ?>
-    <div class="card shadow-sm rounded-4">
-        <div class="card-body">
-            <h5 class="card-title">📈 Laporan Perbandingan Jenis Peminjaman</h5>
-            <p class="text-muted">Menampilkan jumlah peminjaman tiap minggu berdasarkan jenis (ruangan vs kendaraan).</p>
-            <table id="laporanJenisTable" class="table table-striped table-bordered align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Tahun</th>
-                        <th>Minggu Ke-</th>
-                        <th>Rentang Tanggal</th>
-                        <th>Jenis</th>
-                        <th>Jumlah Peminjaman</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = $qJenis->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['tahun']) ?></td>
-                            <td><?= htmlspecialchars($row['minggu_ke']) ?></td>
-                            <td>
-                                <?= date('d M', strtotime($row['tanggal_awal'])) ?> - 
-                                <?= date('d M Y', strtotime($row['tanggal_akhir'])) ?>
-                            </td>
-                            <td><?= ucfirst(htmlspecialchars($row['jenis'])) ?></td>
-                            <td><?= htmlspecialchars($row['total']) ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
+    <?php if ($_SESSION['role'] == 'super_admin' && $qWeeklyDetail): ?>
+<div class="card shadow-sm rounded-4 mt-4">
+    <div class="card-body">
+        <h5 class="card-title">📅 Weekly Report (Detail)</h5>
+        <p class="text-muted">
+            Laporan peminjaman mingguan lengkap berdasarkan jenis, item, dan user.
+        </p>
+
+        <table id="laporanWeeklyDetailTable" class="table table-striped table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tahun</th>
+                    <th>Minggu Ke-</th>
+                    <th>Rentang Tanggal</th>
+                    <th>Jenis</th>
+                    <th>Nama Ruangan / Kendaraan</th>
+                    <th>User Peminjam</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $qWeeklyDetail->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['tahun']) ?></td>
+                    <td><?= htmlspecialchars($row['minggu_ke']) ?></td>
+                    <td>
+                        <?= date('d M', strtotime($row['tanggal_awal'])) ?> -
+                        <?= date('d M Y', strtotime($row['tanggal_akhir'])) ?>
+                    </td>
+                    <td><?= ucfirst($row['jenis']) ?></td>
+                    <td><?= htmlspecialchars($row['nama_item']) ?></td>
+                    <td><?= htmlspecialchars($row['daftar_user']) ?></td>
+                    <td><?= htmlspecialchars($row['total']) ?></td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
-    <?php endif; ?>
+</div>
+<?php endif; ?>
+
 
     <!-- ====================================================================Kendaraan==================================================================== -->
     <?php if ($_SESSION['role'] == 'admin_kendaraan' && $qKendaraan): ?>
