@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 02 Des 2025 pada 04.51
+-- Waktu pembuatan: 02 Des 2025 pada 09.21
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -93,18 +93,6 @@ CREATE TABLE `notifications` (
   `id_peminjaman` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data untuk tabel `notifications`
---
-
-INSERT INTO `notifications` (`id`, `id_user`, `message`, `is_read`, `created_at`, `id_peminjaman`) VALUES
-(178, 3, 'Permintaan peminjaman ruangan baru menunggu persetujuan.', 0, '2025-12-02 03:16:40', NULL),
-(179, 8, 'Permintaan peminjaman ruangan Anda disetujui. Klik untuk melihat/cetak Berita Acara: http://localhost/PinjamRuanganKendaraan/pdf-kembali/2025/Berita_Acara_Ruangan_01_BA-RUANG_XVIII.YOG.1.4_12_2025.pdf', 1, '2025-12-02 03:16:59', NULL),
-(180, 3, 'Pengajuan pengembalian ruangan (01/BA-RUANG/XVIII.YOG.1.4/12/2025) menunggu persetujuan Anda.', 0, '2025-12-02 03:18:52', 104),
-(181, 8, 'Pengembalian ruangan disetujui. ', 1, '2025-12-02 03:19:04', NULL),
-(182, 3, 'Pengajuan pengembalian ruangan (ADM-20251202-9937) menunggu persetujuan Anda.', 0, '2025-12-02 03:19:54', 105),
-(183, 8, 'Pengembalian ruangan disetujui. ', 0, '2025-12-02 03:20:15', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -128,14 +116,6 @@ CREATE TABLE `peminjaman` (
   `nama_manual` varchar(255) DEFAULT NULL,
   `nip_manual` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `peminjaman`
---
-
-INSERT INTO `peminjaman` (`id`, `kode_peminjaman`, `id_user`, `jenis`, `id_item`, `tanggal_pinjam`, `tanggal_kembali`, `status`, `keterangan_user`, `lo`, `created_at`, `tanggal_kembali_aktual`, `tambah_fasilitas`, `nama_manual`, `nip_manual`) VALUES
-(104, '01/BA-RUANG/XVIII.YOG.1.4/12/2025', 8, 'ruangan', 5, '2025-12-02', '2025-12-04', 'dikembalikan', '-', 'Admin Ruangan', '2025-12-02 03:16:40', '2025-12-02', '-', NULL, NULL),
-(105, 'ADM-20251202-9937', 8, 'ruangan', 3, '2025-12-05', '2025-12-08', 'dikembalikan', '-', NULL, '2025-12-02 03:19:35', '2025-12-02', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -205,9 +185,7 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `nama`, `username`, `password`, `role`, `created_at`, `nip`) VALUES
 (1, 'Super Admin', 'superadmin', '$2y$10$XazBAdTImHl5GeBNIyjrfOngrk3TPF6G0SsL9spRjAjPkxasNhXAS', 'super_admin', '2025-11-04 02:53:32', NULL),
 (2, 'Admin Kendaraan', 'adminkendaraan', '$2y$10$3EcWDTiWVkW2eVntaVBjf.aJUqRUcQNMJITZrwq3I7PSKwCdACWXe', 'admin_kendaraan', '2025-11-04 02:53:32', NULL),
-(3, 'Admin Ruangan', 'adminruangan', '$2y$10$9yGj3rwNw9qNWO/tXXh9KeWs.IiKFGdJzvmEJAPBGY3cSBIlQPw5m', 'admin_ruangan', '2025-11-04 02:53:32', NULL),
-(6, 'sinti', 'sisyn', '$2y$10$/zMpzByNQpFpW1.C8QC4juA6tYgupIyoi2me0srNXAnOkcm0lMC9S', 'user', '2025-11-13 06:12:05', NULL),
-(8, 'sin', 'sisin', '$2y$10$5xbZNAUNEjbjovu2yzxVU.vPJbk7JIB.YYaUC0Ra7BgOcvCNGKOsy', 'user', '2025-11-21 02:57:38', '040104');
+(3, 'Admin Ruangan', 'adminruangan', '$2y$10$9yGj3rwNw9qNWO/tXXh9KeWs.IiKFGdJzvmEJAPBGY3cSBIlQPw5m', 'admin_ruangan', '2025-11-04 02:53:32', NULL);
 
 --
 -- Indexes for dumped tables
@@ -282,13 +260,13 @@ ALTER TABLE `kendaraan`
 -- AUTO_INCREMENT untuk tabel `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
 
 --
 -- AUTO_INCREMENT untuk tabel `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
 
 --
 -- AUTO_INCREMENT untuk tabel `pengembalian`
@@ -306,7 +284,7 @@ ALTER TABLE `ruangan`
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
